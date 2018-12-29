@@ -1,6 +1,6 @@
 Usage:
 
-Run the following to go through the auth code flow and print a token.
+Run the following to go through the auth code flow (will launch a browser) which will print an access and refresh token.
 ```
 ./token-request.py <client-id> <client-secret>
 ``` 
@@ -8,7 +8,7 @@ Run the following to go through the auth code flow and print a token.
 In python, do
 ```
 # use token from the script output
-oura = OuraClient(<client-id>, <client-secret>, <access-token>)
+oura = OuraClient(<client-id>, <client-secret>, <access-token>, <refresh-token>)
 
 # make authenticated API calls
 oura.user_info()

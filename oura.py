@@ -32,10 +32,6 @@ class OuraOAuth2Client:
 
     def _request(self, method, url, **kwargs):
 
-        print('URL: ' + url)
-        print('Method: ' + method)
-        print(kwargs)
-
         if self.timeout is not None and 'timeout' not in kwargs:
             kwargs['timeout'] = self.timeout
 
@@ -84,12 +80,13 @@ class OuraClient:
     API_ENDPOINT = "https://api.ouraring.com"
 
     def __init__(self, client_id, client_secret, access_token=None, 
-        expires_at=None, redirect_uri=None, **kwargs):
+        refresh_token=None, expires_at=None, redirect_uri=None, **kwargs):
 
         self.client = OuraOAuth2Client(
             client_id,
             client_secret,
             access_token=access_token,
+            refresh_token=refresh_token,
             expires_at=expires_at,
             redirect_uri=redirect_uri,
             **kwargs
@@ -119,22 +116,32 @@ class OuraClient:
 
         return rep
 
+
     def user_info(self):
         url = "{}/v1/userinfo".format(self.API_ENDPOINT)
         return self.make_request(url)
 
     
     def sleep_summary(self, start=None, end=None):
-        url = "{}/v1/sleep?start={}&end={}".format(self.API_ENDPOINT, start, end or '')
+        url = self._build_summary_url(start, end, "sleep")
         return self.make_request(url)
 
 
     def activity_summary(self, start=None, end=None):
-        url = "{}/v1/activity?start={}&end={}".format(self.API_ENDPOINT, start, end or '')
+        url = self._build_summary_url(start, end, "activity")
         return self.make_request(url)
 
 
     def readiness_summary(self, start=None, end=None):
-        url = "{}/v1/readiness?start={}&end={}".format(self.API_ENDPOINT, start, end or '')
+        url = self._build_summary_url(start, end, "readiness")
         return self.make_request(url)
 
+
+    def _build_summary_url(self, start, end, datatype):
+        if start is None:
+            raise ValueError("Request for {} summary must include start date.".format(datatype))
+
+        url = "{0}/v1/{1}?start={2}".format(self.API_ENDPOINT, datatype, start)
+        if end:
+            url = "{0}&end={1}".format(url, end)
+        return url
