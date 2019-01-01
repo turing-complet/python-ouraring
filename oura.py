@@ -2,6 +2,7 @@
 from requests_oauthlib import OAuth2Session
 import exceptions
 import json
+import requests
 
 class OuraOAuth2Client:
 
@@ -10,7 +11,7 @@ class OuraOAuth2Client:
     SCOPE = ["email", "personal", "daily"]
 
     def __init__(self, client_id, client_secret, access_token=None,
-        refresh_token=None, expires_at=None, refresh_cb=None,
+        refresh_token=None, expires_at=None, refresh_callback=None,
         redirect_uri=None, *args, **kwargs):
 
         self.client_id, self.client_secret = client_id, client_secret
@@ -25,6 +26,7 @@ class OuraOAuth2Client:
         self.session = OAuth2Session(
             client_id,
             token=token,
+            token_updater=refresh_callback,
             redirect_uri=redirect_uri
         )
         self.timeout = kwargs.get("timeout", None)
@@ -94,27 +96,12 @@ class OuraClient:
 
 
     def make_request(self, *args, **kwargs):
-        # This should handle data level errors, improper requests, and bad
-        # serialization
         headers = kwargs.get('headers', {})
         kwargs['headers'] = headers
 
-        method = kwargs.get('method', 'POST' if 'data' in kwargs else 'GET')
+        method = kwargs.get('method', 'GET')
         response = self.client.make_request(*args, **kwargs)
-
-        if response.status_code == 202:
-            return True
-        if method == 'DELETE':
-            if response.status_code == 204:
-                return True
-            else:
-                raise exceptions.DeleteError(response)
-        try:
-            rep = json.loads(response.content.decode('utf8'))
-        except ValueError:
-            raise exceptions.BadResponse
-
-        return rep
+        return json.loads(response.content.decode('utf8'))
 
 
     def user_info(self):
