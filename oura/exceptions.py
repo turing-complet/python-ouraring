@@ -1,20 +1,5 @@
 import json
 
-
-class BadResponse(Exception):
-    """
-    Currently used if the response can't be json encoded, despite a .json extension
-    """
-    pass
-
-
-class DeleteError(Exception):
-    """
-    Used when a delete request did not return a 204
-    """
-    pass
-
-
 class Timeout(Exception):
     """
     Used when a timeout occurs.
