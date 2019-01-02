@@ -7,6 +7,7 @@ Run the following to go through the auth code flow (will launch a browser) which
 
 In python, do
 ```
+from oura import OuraClient
 oura = OuraClient(<client-id>, <client-secret>, <access-token>, <refresh-token>, <refresh-callback>, <expires-at>)
 
 # make authenticated API calls
