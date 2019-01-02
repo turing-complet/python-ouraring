@@ -1,6 +1,6 @@
 
 from requests_oauthlib import OAuth2Session
-import exceptions
+from . import exceptions
 import json
 import requests
 
@@ -26,6 +26,7 @@ class OuraOAuth2Client:
         self.session = OAuth2Session(
             client_id,
             token=token,
+            auto_refresh_url=self.TOKEN_BASE_URL,
             token_updater=refresh_callback,
             redirect_uri=redirect_uri
         )

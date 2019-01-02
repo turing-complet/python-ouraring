@@ -3,7 +3,7 @@ from oura import OuraOAuth2Client
 import requests_mock
 import json
 
-class TestOAuthClient(unittest.TestCase):
+class OAuthTests(unittest.TestCase):
     
     def test_build_authorize_endpoint(self):
         client = OuraOAuth2Client("test_client", "test_secret")
