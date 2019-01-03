@@ -44,7 +44,9 @@ class UploadCommand(Command):
     """Support setup.py upload."""
 
     description = 'Build and publish the package.'
-    user_options = []
+    user_options = [
+        ('test', None, 'Upload to test server')
+    ]
 
     @staticmethod
     def status(s):
@@ -52,7 +54,8 @@ class UploadCommand(Command):
         print('\033[1m{0}\033[0m'.format(s))
 
     def initialize_options(self):
-        pass
+        self.test = False
+        self.test_server = 'https://test.pypi.org/legacy/'
 
     def finalize_options(self):
         pass
@@ -67,8 +70,12 @@ class UploadCommand(Command):
         self.status('Building Source and Wheel (universal) distribution…')
         os.system('{0} setup.py sdist bdist_wheel --universal'.format(sys.executable))
 
-        self.status('Uploading the package to PyPI via Twine…')
-        os.system('twine upload dist/*')
+        if self.test:
+            self.status('Uploading the package to test server via Twine…')
+            os.system('twine upload --repository-url {} dist/*'.format(self.test_server))
+        else:
+            self.status('Uploading the package to PyPI via Twine…')
+            os.system('twine upload dist/*')
 
         self.status('Pushing git tags…')
         os.system('git tag v{0}'.format(about['__version__']))

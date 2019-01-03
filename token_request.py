@@ -81,6 +81,7 @@ if __name__ == '__main__':
 
     # test_response = server.oura.user_info()
 
-    print('TOKEN\n=====\n')
+    print("Save these values!")
     for key, value in server.oura.client.session.token.items():
         print('{} = {}'.format(key, value))
+    input("Press any key to close")
