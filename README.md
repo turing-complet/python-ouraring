@@ -1,3 +1,5 @@
+Better docs coming soon..
+
 Usage:
 
 Run the following to go through the auth code flow (will launch a browser) which will print an access and refresh token.
@@ -7,8 +9,23 @@ Run the following to go through the auth code flow (will launch a browser) which
 
 In python, do
 ```
-from oura import OuraClient
-oura = OuraClient(<client-id>, <client-secret>, <access-token>, <refresh-token>, <refresh-callback>, <expires-at>)
+from oura import OuraClient, OuraOAuth2Client
+
+auth_client = OuraOAuth2Client(client_id='my_application', client_secret='random-string')
+url = auth_client.authorize_endpoint(scope='defaults to all scopes', 'https://localhost/myendpoint')
+# user clicks url, auth happens, then redirect to given url
+```
+
+Now we handle the redirect by exchanging an auth code for a token
+
+```
+# save this somewhere, see below
+token_dict = auth_client.fetch_access_token(code='auth_code_from_query_string')
+```
+
+Now that's out of the way, you can call the api:
+```
+oura = OuraClient(client_id='my_application', <access-token>, <refresh-token>, <expires-at>, <refresh-callback>)
 
 # make authenticated API calls
 oura.user_info()

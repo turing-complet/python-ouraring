@@ -7,7 +7,7 @@ import traceback
 import webbrowser
 
 from base64 import b64encode
-from oura import OuraClient, OuraOAuth2Client
+from oura import OuraOAuth2Client
 from oauthlib.oauth2.rfc6749.errors import MismatchingStateError, MissingTokenError
 
 
@@ -20,7 +20,7 @@ class OAuth2Server:
         self.failure_html = """
             <h1>ERROR: %s</h1><br/><h3>You can close this window</h3>%s"""
 
-        self.oura = OuraClient(client_id, client_secret)
+        self.auth_client = OuraOAuth2Client(client_id, client_secret)
 
 
     def browser_authorize(self):
@@ -28,7 +28,7 @@ class OAuth2Server:
         Open a browser to the authorization url and spool up a CherryPy
         server to accept the response
         """
-        url, _ = self.oura.client.authorize_endpoint()
+        url, _ = self.auth_client.authorize_endpoint()
         # Open the web browser in a new thread for command-line browser support
         threading.Timer(1, webbrowser.open, args=(url,)).start()
         cherrypy.config.update({'server.socket_port': 3030})
@@ -43,7 +43,7 @@ class OAuth2Server:
         """
         if code:
             try:
-                self.oura.client.fetch_access_token(code)
+                self.auth_client.fetch_access_token(code)
             except MissingTokenError:
                 error = self._fmt_failure(
                     'Missing access token parameter.</br>Please check that '
@@ -81,6 +81,11 @@ if __name__ == '__main__':
 
     # test_response = server.oura.user_info()
 
-    print('TOKEN\n=====\n')
-    for key, value in server.oura.client.session.token.items():
-        print('{} = {}'.format(key, value))
+    try:
+        print("Save these values!")
+        for key, value in server.auth_client.session.token.items():
+            print('{} = {}'.format(key, value))
+    except Exception as e:
+        print(e)
+    
+    input("Press any key to close")
