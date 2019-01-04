@@ -4,3 +4,4 @@ __pycache__
 build
 *.egg-info
 .tox
+docs/_build/

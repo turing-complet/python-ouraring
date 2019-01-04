@@ -6,7 +6,7 @@ Oura API Library
 
 ------------------
 
-Simple client for talking to the Oura api.
+It's a description for __init__.py, innit. 
 
 """
-from .oura import OuraOAuth2Client, OuraClient
+from .client import OuraClient, OuraOAuth2Client
