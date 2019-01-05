@@ -12,5 +12,3 @@ cherrypy = "*"
 sphinx-rtd-theme = "*"
 flask = "*"
 
-[requires]
-python_version = "3.6"
