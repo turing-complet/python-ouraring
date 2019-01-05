@@ -9,6 +9,21 @@ import webbrowser
 from base64 import b64encode
 from oura import OuraOAuth2Client
 from oauthlib.oauth2.rfc6749.errors import MismatchingStateError, MissingTokenError
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    auth_code = request.args.get('code')
+    auth_client.fetch_access_token(code)
+    print("Save these values!")
+        for key, value in server.auth_client.session.token.items():
+            print('{} = {}'.format(key, value))
+    return """
+            <h1>You are now authorized to access the Oura API!</h1>
+            <br/><h3>You can close this window</h3>"""
+
 
 
 class OAuth2Server:

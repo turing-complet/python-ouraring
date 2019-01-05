@@ -13,7 +13,8 @@ class OuraOAuth2Client:
     def __init__(self, client_id, client_secret):
 
         """
-        Use this to auth first
+        Use this for authorizing user and obtaining initial access and refresh token.
+        Should be one time usage per user.
 
         :param client_id: The client id from oura portal.
         :type client_id: str
@@ -44,8 +45,9 @@ class OuraOAuth2Client:
 
 class OuraClient:
     """
-    Use this class for all HTTP requests to oura. Init with creds and it will auth itself 
-    after user has authorized once.
+    Use this class for making requests on behalf ot a user. If refresh_token and expires_at are supplied, 
+    access_token should be refreshed automatically and passed to the refresh_callback function, along with
+    other properties in the response.
     """
 
     API_ENDPOINT = "https://api.ouraring.com"
@@ -92,8 +94,7 @@ class OuraClient:
 
     def user_info(self):
         """
-        Returns information about the logged in user (who the access token was issued for),
-        if the "personal" scope was granted.
+        Returns information about the logged in user (who the access token was issued for).
 
         See https://cloud.ouraring.com/docs/personal-info
         """
