@@ -40,7 +40,8 @@ class OuraOAuth2Client:
     def fetch_access_token(self, code):
         return self.session.fetch_token(
             self.TOKEN_BASE_URL,
-            code=code)
+            code=code,
+            client_secret = self.client_secret)
 
 
 class OuraClient:

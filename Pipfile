@@ -8,7 +8,5 @@ verify_ssl = true
 [packages]
 requests-oauthlib = "*"
 sphinx = "*"
-cherrypy = "*"
 sphinx-rtd-theme = "*"
 flask = "*"
-
