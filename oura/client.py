@@ -31,6 +31,14 @@ class OuraOAuth2Client:
 
 
     def authorize_endpoint(self, scope=None, redirect_uri=None, **kwargs):
+        """
+        Build the authorization url for a user to click.
+
+        :param scope: Scopes to request from the user. Defaults to self.SCOPE
+        :type scope: str
+        :param redirect_uri: Where to redirect after user grants access.
+        :type redirect_uri: str
+        """
         self.session.scope = scope or self.SCOPE
         if redirect_uri:
             self.session.redirect_uri = redirect_uri
@@ -38,6 +46,12 @@ class OuraOAuth2Client:
 
 
     def fetch_access_token(self, code):
+        """
+        Exchange the auth code for an access and refresh token. 
+
+        :param code: Authorization code from query string
+        :type code: str
+        """
         return self.session.fetch_token(
             self.TOKEN_BASE_URL,
             code=code,
@@ -46,7 +60,7 @@ class OuraOAuth2Client:
 
 class OuraClient:
     """
-    Use this class for making requests on behalf ot a user. If refresh_token and expires_at are supplied, 
+    Use this class for making requests on behalf of a user. If refresh_token and expires_at are supplied, 
     access_token should be refreshed automatically and passed to the refresh_callback function, along with
     other properties in the response.
     """
@@ -104,16 +118,43 @@ class OuraClient:
 
     
     def sleep_summary(self, start=None, end=None):
+        """
+        Get sleep summary for the given date range. See https://cloud.ouraring.com/docs/sleep
+
+        :param start: Beginning of date range
+        :type start: date
+
+        :param end: End of date range, or None if you want the current day.
+        :type end: date
+        """
         url = self._build_summary_url(start, end, "sleep")
         return self._make_request(url)
 
 
     def activity_summary(self, start=None, end=None):
+        """
+        Get activity summary for the given date range. See https://cloud.ouraring.com/docs/activity
+
+        :param start: Beginning of date range
+        :type start: date
+
+        :param end: End of date range, or None if you want the current day.
+        :type end: date
+        """
         url = self._build_summary_url(start, end, "activity")
         return self._make_request(url)
 
 
     def readiness_summary(self, start=None, end=None):
+        """
+        Get readiness summary for the given date range. See https://cloud.ouraring.com/docs/readiness
+
+        :param start: Beginning of date range
+        :type start: date
+
+        :param end: End of date range, or None if you want the current day.
+        :type end: date
+        """
         url = self._build_summary_url(start, end, "readiness")
         return self._make_request(url)
 
