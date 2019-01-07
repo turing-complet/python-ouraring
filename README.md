@@ -1,4 +1,4 @@
-Better docs coming soon..
+Official package coming soon..
 
 Usage:
 
