@@ -17,11 +17,11 @@ DESCRIPTION = 'Oura api client.'
 URL = 'https://github.com/turing-complet/python-ouraring'
 EMAIL = 'jhagg314@gmail.com'
 AUTHOR = 'Jon Hagg'
-REQUIRES_PYTHON = '>=3.6.0'
+REQUIRES_PYTHON = '>=3.5.5'
 VERSION = '1.0.0'
 
 REQUIRED = [
-    'requests-oauthlib', 'requests'
+    'requests-oauthlib'
 ]
 
 EXTRAS = {
@@ -95,9 +95,9 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    packages=find_packages(exclude=('tests',)),
+    # packages=find_packages(exclude=('tests',)),
     # If your package is a single module, use this instead of 'packages':
-    # py_modules=['mypackage'],
+    py_modules=['oura.client'],
 
     # entry_points={
     #     'console_scripts': ['mycli=mymodule:cli'],
