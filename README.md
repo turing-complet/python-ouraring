@@ -2,12 +2,12 @@ Official package coming soon..
 
 Usage:
 
-Run the following to go through the auth code flow (will launch a browser) which will print an access and refresh token.
+Once you register an application, you can use this sample script to authorize access to your own data or some test account data. It will follow the auth code flow and print out the token response. 
 ```
 ./token-request.py <client-id> <client-secret>
 ``` 
 
-In python, do
+Or in your application, do
 ```
 from oura import OuraClient, OuraOAuth2Client
 
