@@ -5,6 +5,10 @@ import json
 import requests
 
 class OuraOAuth2Client:
+    """
+    Use this for authorizing user and obtaining initial access and refresh token.
+    Should be one time usage per user.
+    """
 
     AUTHORIZE_BASE_URL = "https://cloud.ouraring.com/oauth/authorize"
     TOKEN_BASE_URL = "https://api.ouraring.com/oauth/token"
@@ -13,9 +17,7 @@ class OuraOAuth2Client:
     def __init__(self, client_id, client_secret):
 
         """
-        Use this for authorizing user and obtaining initial access and refresh token.
-        Should be one time usage per user.
-
+        Initialize the client for oauth flow.
         :param client_id: The client id from oura portal.
         :type client_id: str
         :param client_secret: The client secret from oura portal.
