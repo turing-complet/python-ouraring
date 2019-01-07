@@ -10,6 +10,18 @@ Welcome to python-oura's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+Usage
+-----
+
+More detailed documentation to get you started
+
+.. toctree::
+   :maxdepth: 2
+
+   auth
+   summaries
+
+
 API Reference
 -------------
 
