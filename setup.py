@@ -107,7 +107,7 @@ setup(
     include_package_data=True,
     license='MIT',
     # $ setup.py publish support.
-    classifiers = 
+    classifiers = [
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Natural Language :: English',
