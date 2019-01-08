@@ -1,4 +1,3 @@
-Official package coming soon..
 
 Usage:
 

@@ -17,8 +17,8 @@ DESCRIPTION = 'Oura api client.'
 URL = 'https://github.com/turing-complet/python-ouraring'
 EMAIL = 'jhagg314@gmail.com'
 AUTHOR = 'Jon Hagg'
-REQUIRES_PYTHON = '>=3.5.5'
-VERSION = '1.0.0'
+REQUIRES_PYTHON = '>=3.5.3'
+VERSION = '1.0.2'
 
 REQUIRED = [
     'requests-oauthlib'
@@ -77,9 +77,9 @@ class UploadCommand(Command):
             self.status('Uploading the package to PyPI via Twine…')
             os.system('twine upload dist/*')
 
-        self.status('Pushing git tags…')
-        os.system('git tag v{0}'.format(about['__version__']))
-        os.system('git push --tags')
+        # self.status('Pushing git tags…')
+        # os.system('git tag v{0}'.format(about['__version__']))
+        # os.system('git push --tags')
         
         sys.exit()
 
@@ -95,9 +95,9 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    # packages=find_packages(exclude=('tests',)),
+    packages=find_packages(exclude=('tests',)),
     # If your package is a single module, use this instead of 'packages':
-    py_modules=['oura.client'],
+    # py_modules=['oura.client'],
 
     # entry_points={
     #     'console_scripts': ['mycli=mymodule:cli'],
@@ -107,6 +107,20 @@ setup(
     include_package_data=True,
     license='MIT',
     # $ setup.py publish support.
+    classifiers = 
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: Developers',
+        'Natural Language :: English',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+    ],
     cmdclass={
         'upload': UploadCommand,
     },
