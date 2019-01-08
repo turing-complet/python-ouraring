@@ -1,6 +1,12 @@
 
 Usage:
 
+Install the package:
+
+```
+pip install oura
+```
+
 Once you register an application, you can use this sample script to authorize access to your own data or some test account data. It will follow the auth code flow and print out the token response. 
 ```
 ./token-request.py <client-id> <client-secret>
