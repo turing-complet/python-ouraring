@@ -12,7 +12,15 @@ See the `official documentation <https://cloud.ouraring.com/docs/daily-summaries
 Usage
 ========================
 
-Your application should implement a way to store and retrieve the token information for each user, 
+If you just want to make some requests, it's fairly easy. Just do this::
+
+    from oura import OuraClient
+    oura = OuraClient(client_id=MY_CLIENT_ID, access_token=ACCESS_TOKEN)
+
+And you're set to call summary methods.
+
+
+If you want a more automated approach, your application should implement a way to store and retrieve the token information for each user, 
 and create each instance of :class:`oura.OuraClient` with that information (as well the client_id to identify your app).
 
 For example::
@@ -21,10 +29,9 @@ For example::
     token = get_token_from_database(some_user_id) # you implement this
     access_token = token['access_token']
     refresh_token = token['refresh_token']
-    expires_at = token['expires_at']
 
     # you implement save_token_to_db() function
-    client = OuraClient(client_id=MY_CLIENT_ID, access_token, refresh_token, expires_at, refresh_callback=save_token_to_db)
+    client = OuraClient(client_id=MY_CLIENT_ID, client_secret=MY_CLIENT_SECRET, access_token, refresh_token, refresh_callback=save_token_to_db)
 
 
 Now you are ready to get all the data, provided the user has granted you the required scopes.::

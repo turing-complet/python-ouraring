@@ -71,8 +71,7 @@ class OuraClient:
     API_ENDPOINT = "https://api.ouraring.com"
     TOKEN_BASE_URL = "https://api.ouraring.com/oauth/token"
 
-    def __init__(self, client_id, access_token=None, refresh_token=None,
-        expires_at=None, refresh_callback=None):
+    def __init__(self, client_id, client_secret=None, access_token=None, refresh_token=None, refresh_callback=None):
 
         """
         Initialize the client
@@ -80,27 +79,27 @@ class OuraClient:
         :param client_id: The client id from oura portal.
         :type client_id: str
 
+        :param client_secret: The client secret from oura portal. Required for auto refresh.
+        :type client_secret: str
+
         :param access_token: Auth token.
         :type access_token: str
 
         :param refresh_token: Use this to renew tokens when they expire
         :type refresh_token: str
 
-        :param expires_at: The unix timestamp for access token expiration.
-        :type expires_at: str
-
         :param refresh_callback: Method to save the access token, refresh token, expires at
         :type refresh_callback: callable
 
         """
 
+        self.client_id = client_id
+        self.client_secret = client_secret
         token = {}
         if access_token:
             token.update({ 'access_token': access_token })
         if refresh_token:
             token.update({ 'refresh_token': refresh_token })
-        if expires_at:
-            token['expires_at'] = expires_at
 
         self._session = OAuth2Session(
             client_id,
@@ -165,15 +164,15 @@ class OuraClient:
     def _make_request(self, url, data=None, method=None, **kwargs):
         data = data or {}
         method = method or 'GET'
-        response = self._session.request(
-            method,
-            url,
-            data=data,
-            **kwargs
-        )
+        response = self._session.request(method, url, data=data, **kwargs)
+        if response.status_code == 401:
+            self._refresh_token()
+            response = self._session.request(method, url, data=data, **kwargs)
+        
         exceptions.detect_and_raise_error(response)
         payload = json.loads(response.content.decode('utf8'))
         return payload
+
 
     def _build_summary_url(self, start, end, datatype):
         if start is None:
@@ -183,3 +182,11 @@ class OuraClient:
         if end:
             url = "{0}&end={1}".format(url, end)
         return url
+
+
+    def _refresh_token(self):
+        token = self._session.refresh_token(self.TOKEN_BASE_URL, client_id=self.client_id, client_secret=self.client_secret)
+        if self._session.token_updater:
+            self._session.token_updater(token)
+
+        return token
