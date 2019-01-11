@@ -30,7 +30,11 @@ token_dict = auth_client.fetch_access_token(code='auth_code_from_query_string')
 
 Now that's out of the way, you can call the api:
 ```
-oura = OuraClient(client_id='my_application', <access-token>, <refresh-token>, <expires-at>, <refresh-callback>)
+# supply all the params for auto refresh
+oura = OuraClient(<client_id>, <client_secret> <access_token>, <refresh_token>, <refresh_callback>)
+
+# or just these for make calls until token expires
+oura = OuraClient(<client_id>, <access_token>)
 
 # make authenticated API calls
 oura.user_info()
@@ -39,9 +43,8 @@ oura.activity_summary(start='2018-12-25')
 oura.readiness_summary() # throws exception since start is None
 ```
 
-Constructor arguments `access-token`, `refresh-token`, and `expires-at` should be stored per user and passed in to allow auto-renewal
 
-The `refresh-callback` is a fuction that takes a token dict and saves it somewhere. It will look like:
+The `refresh_callback` is a fuction that takes a token dict and saves it somewhere. It will look like:
 ```
 {'token_type': 'bearer', 'refresh_token': <refresh>, 'access_token': <token>, 'expires_in': 86400, 'expires_at': 1546485086.3277025}
 ```
