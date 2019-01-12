@@ -18,7 +18,7 @@ URL = 'https://github.com/turing-complet/python-ouraring'
 EMAIL = 'jhagg314@gmail.com'
 AUTHOR = 'Jon Hagg'
 REQUIRES_PYTHON = '>=3.5.3'
-VERSION = '1.0.2'
+VERSION = '1.0.3'
 
 REQUIRED = [
     'requests-oauthlib'
