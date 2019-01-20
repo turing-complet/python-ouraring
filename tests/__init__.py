@@ -1,1 +1,1 @@
-from . import test
+from . import test_auth, test_client
