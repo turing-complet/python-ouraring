@@ -1,18 +1,27 @@
 
-Usage:
+## Installation
 
-Install the package:
+Package is on pypi, so install with pip, or pipenv if you're sophisticated. Or you can clone the repo and install from the Pipfile.
 
 ```
 pip install oura
+
+pipenv install oura
 ```
 
-Once you register an application, you can use this sample script to authorize access to your own data or some test account data. It will follow the auth code flow and print out the token response. 
+## Getting started
+
+Once you register an application, you can use this sample script to authorize access to your own data or some test account data. It will follow the auth code flow and print out the token response. Make sure to add localhost:3030 to the redirect uris for your app (the port can be changed in the script).
 ```
 ./token-request.py <client-id> <client-secret>
 ``` 
 
-Or in your application, do
+Some sample code is located in the [samples](samples) directory, maybe it will be useful for you. Maybe it will change your life for the better. Maybe it will cause you to rethink using this project at all. Let me know the outcome if you feel like it.
+
+
+## Business time
+
+If you are writing a real application, use the following pattern. Basically, the work is done by the underlying oauthlib to use the refresh token whenever the access token has expired, and you supply the refresh callback to save the new tokens for next time. This seems to have worked fine for me, but I don't actually use this library that much
 ```
 from oura import OuraClient, OuraOAuth2Client
 
