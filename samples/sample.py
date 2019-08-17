@@ -3,7 +3,9 @@ import os
 import json
 
 def setEnvironment(envFile):
-    with open(envFile) as file:
+    basePath = os.path.dirname(os.path.abspath(__file__))
+    fullPath = os.path.join(basePath, envFile)
+    with open(fullPath) as file:
         env = json.load(file)
         os.environ['OURA_CLIENT_ID'] = env['client_id']
         os.environ['OURA_CLIENT_SECRET'] = env['client_secret']
@@ -12,10 +14,10 @@ def setEnvironment(envFile):
 
 
 def appendFile(filename, token_dict):
-    if type(token_dict) is not dict:
-        raise TypeError("Please supply a dict for the refresh callback, received type={0}".format(type(token_dict)))
 
-    with open(filename, 'a') as file:
+    basePath = os.path.dirname(os.path.abspath(__file__))
+    fullPath = os.path.join(basePath, envFile)
+    with open(fullPath, 'a') as file:
         prev = json.load(file)
         curr = {
             'client_id': prev.pop('client_id'),
