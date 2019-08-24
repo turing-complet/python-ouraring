@@ -16,7 +16,7 @@ def setEnvironment(envFile):
 def appendFile(filename, token_dict):
 
     basePath = os.path.dirname(os.path.abspath(__file__))
-    fullPath = os.path.join(basePath, envFile)
+    fullPath = os.path.join(basePath, filename)
     with open(fullPath, 'a') as file:
         prev = json.load(file)
         curr = {
