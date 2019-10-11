@@ -1,6 +1,7 @@
 from oura import OuraClient
 import os
 import json
+from datetime import datetime
 
 def setEnvironment(envFile):
     basePath = os.path.dirname(os.path.abspath(__file__))
@@ -50,5 +51,6 @@ if __name__ == "__main__":
     
     setEnvironment('token.json')
     client = getOuraClient()
-    sleep = client.sleep_summary()
+    today = datetime.today()
+    sleep = client.sleep_summary(today)
     print(sleep)
