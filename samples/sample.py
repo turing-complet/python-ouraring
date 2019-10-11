@@ -18,7 +18,7 @@ def appendFile(filename, token_dict):
 
     basePath = os.path.dirname(os.path.abspath(__file__))
     fullPath = os.path.join(basePath, filename)
-    with open(fullPath, 'a') as file:
+    with open(fullPath, 'a+') as file:
         prev = json.load(file)
         curr = {
             'client_id': prev.pop('client_id'),
@@ -30,12 +30,12 @@ def appendFile(filename, token_dict):
         json.dump(curr, file)
 
 
-def getOuraClient():
+def getOuraClient(envFile):
     client_id = os.getenv('OURA_CLIENT_ID')
     client_secret = os.getenv('OURA_CLIENT_SECRET')
     access_token = os.getenv('OURA_ACCESS_TOKEN')
     refresh_token = os.getenv('OURA_REFRESH_TOKEN')
-    refresh_callback = lambda x: appendFile('token.json', x)
+    refresh_callback = lambda x: appendFile(envFile, x)
 
     auth_client = OuraClient(
         client_id=client_id,
@@ -49,8 +49,9 @@ def getOuraClient():
 
 if __name__ == "__main__":
     
-    setEnvironment('token.json')
-    client = getOuraClient()
+    envFile = "token.json"
+    setEnvironment(envFile)
+    client = getOuraClient(envFile)
     today = datetime.today()
     sleep = client.sleep_summary(today)
     print(sleep)
