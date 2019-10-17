@@ -18,7 +18,7 @@ def appendFile(filename, token_dict):
 
     basePath = os.path.dirname(os.path.abspath(__file__))
     fullPath = os.path.join(basePath, filename)
-    with open(fullPath, 'a+') as file:
+    with open(fullPath, 'r+') as file:
         prev = json.load(file)
         curr = {
             'client_id': prev.pop('client_id'),
@@ -27,6 +27,7 @@ def appendFile(filename, token_dict):
             'refresh_token': token_dict['refresh_token'],
             'previous': json.dumps(prev)
         }
+        file.seek(0)
         json.dump(curr, file)
 
 
