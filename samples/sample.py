@@ -23,7 +23,7 @@ def appendFile(filename, token_dict):
         curr = {
             'client_id': prev.pop('client_id'),
             'client_secret': prev.pop('client_secret'),
-            'access_token': token_dict['token_dict'],
+            'access_token': token_dict['access_token'],
             'refresh_token': token_dict['refresh_token'],
             'previous': json.dumps(prev)
         }
