@@ -1,13 +1,9 @@
 
 ## Installation
 
-Package is on pypi, so install with pip, or pipenv if you're sophisticated. Or you can clone the repo and install from the Pipfile.
+Package is on pypi, so install as follows, or clone the repo and install dependencies using pipenv.
 
-```
-pip install oura
-
-pipenv install oura
-```
+`pip install oura` or `pipenv install oura`
 
 ## Getting started
 
