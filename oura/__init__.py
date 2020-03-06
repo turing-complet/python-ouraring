@@ -10,3 +10,4 @@ It's a description for __init__.py, innit.
 
 """
 from .client import OuraClient, OuraOAuth2Client
+from .authentication_wrapper import AuthenticationWrapper

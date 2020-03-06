@@ -22,6 +22,7 @@ VERSION = '1.0.4'
 
 REQUIRED = [
     'requests-oauthlib'
+    'cherrypy'
 ]
 
 EXTRAS = {

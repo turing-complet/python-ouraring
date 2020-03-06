@@ -54,4 +54,11 @@ The `refresh_callback` is a fuction that takes a token dict and saves it somewhe
 {'token_type': 'bearer', 'refresh_token': <refresh>, 'access_token': <token>, 'expires_in': 86400, 'expires_at': 1546485086.3277025}
 ```
 
+Getting the access token and the refresh token in one go by using the client id and the secret of the app created:
+```# make authenticated API calls
+auth_wrapper = AuthenticationWrapper(client_id, client_secret)
+auth_wrapper.browser_authorize()
+acc_t = auth_wrapper.oura_client.session.token['access_token']
+ref_t = auth_wrapper.oura_client.session.token['refresh_token']
+```
 Live your life.
