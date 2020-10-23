@@ -3,6 +3,7 @@ import json
 
 logger = logging.getLogger(__name__)
 
+
 class OuraModel:
     # TODO factor out common keys, like "summary_date"
     _KEYS = []
@@ -11,9 +12,8 @@ class OuraModel:
         obj = json_parsed if json_parsed is not None else json.loads(json_raw)
         set_attrs(self, obj)
 
-
     def __str__(self):
-        return ", ".join( ["{}={}".format(k, getattr(self, k)) for k in self._KEYS ] )
+        return ", ".join(["{}={}".format(k, getattr(self, k)) for k in self._KEYS])
 
 
 def set_attrs(instance, lookup):
@@ -28,8 +28,12 @@ def from_dict(response_dict, typename: OuraModel):
             setattr(obj, k, response_dict[k])
         else:
             setattr(obj, k, None)
-            logger.warning("Expected property missing from json response. property={}, class={}".format(k, typename.__class__.__name__))
-    
+            logger.warning(
+                "Expected property missing from json response. property={}, class={}".format(
+                    k, typename.__class__.__name__
+                )
+            )
+
     return obj
 
 

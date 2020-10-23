@@ -1,5 +1,5 @@
-
 from helper import OuraModel, from_json
+
 
 class Activity(OuraModel):
     _KEYS = [
@@ -32,11 +32,11 @@ class Activity(OuraModel):
         "met_min_high",
         "average_met",
         "class_5min",
-        "met_1min"
+        "met_1min",
     ]
 
 
-if __name__  == '__main__':
+if __name__ == "__main__":
     test = """
 {
         "summary_date": "2016-09-03",

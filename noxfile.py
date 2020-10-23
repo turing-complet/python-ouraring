@@ -1,7 +1,7 @@
 import nox
 
 nox.options.sessions = "lint", "tests"
-
+locations = ["oura", "tests", "samples"]
 
 @nox.session
 def tests(session):
@@ -13,7 +13,7 @@ def tests(session):
 
 @nox.session
 def lint(session):
-    args = session.posargs or ["oura", "tests", "samples"]
+    args = session.posargs or locations
     session.install("flake8", "flake8-black")
     session.run("flake8", *args)
 

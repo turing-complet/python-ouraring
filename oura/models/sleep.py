@@ -1,5 +1,5 @@
-
 from helper import OuraModel, from_json
+
 
 class Sleep(OuraModel):
     _KEYS = [
@@ -34,11 +34,11 @@ class Sleep(OuraModel):
         "temperature_delta",
         "hypnogram_5min",
         "hr_5min",
-        "rmssd_5min"
+        "rmssd_5min",
     ]
 
 
-if __name__  == '__main__':
+if __name__ == "__main__":
     test = """
 {
   "summary_date": "2017-11-05",
