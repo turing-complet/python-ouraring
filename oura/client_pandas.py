@@ -1,5 +1,3 @@
-from datetime import datetime, timedelta
-from collections import defaultdict
 import pandas as pd
 
 from .client import OuraClient

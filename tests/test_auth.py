@@ -1,6 +1,8 @@
-from oura import OuraOAuth2Client
-import requests_mock
 import json
+
+import requests_mock
+
+from oura import OuraOAuth2Client
 
 
 def test_build_authorize_endpoint():

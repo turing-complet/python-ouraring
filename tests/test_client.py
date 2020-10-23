@@ -1,10 +1,9 @@
-from oura import OuraClient
-import requests_mock
-from requests_mock import ANY
-import requests
-from urllib.parse import urlparse, parse_qs
 import json
-import functools
+from urllib.parse import parse_qs, urlparse
+
+import requests_mock
+
+from oura import OuraClient
 
 adapter = requests_mock.Adapter()
 
@@ -52,7 +51,7 @@ def test_token_refresh():
 
     client._session.mount(client.API_ENDPOINT, adapter)
     try:
-        resp = client.user_info()
-    except:
+        client.user_info()
+    except Exception:
         pass
     assert len(update_called) == 1

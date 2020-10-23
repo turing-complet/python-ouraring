@@ -1,13 +1,14 @@
-import pytest
+import json
 import os
 from datetime import date
+
 import pandas as pd
+import pytest
+
+from oura import OuraClientDataFrame
 
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.sys.path.insert(0, parent_dir)
-
-from oura import OuraClientDataFrame
-import json
 
 
 @pytest.fixture

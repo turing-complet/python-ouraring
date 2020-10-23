@@ -1,7 +1,8 @@
-from requests_oauthlib import OAuth2Session
-from . import exceptions
 import json
-import requests
+
+from requests_oauthlib import OAuth2Session
+
+from . import exceptions
 
 
 class OuraOAuth2Client:
@@ -59,10 +60,9 @@ class OuraOAuth2Client:
 
 
 class OuraClient:
-    """
-    Use this class for making requests on behalf of a user. If refresh_token and expires_at are supplied,
-    access_token should be refreshed automatically and passed to the refresh_callback function, along with
-    other properties in the response.
+    """Use this class for making requests on behalf of a user. If refresh_token and
+    expires_at are supplied, access_token should be refreshed automatically and
+    passed to the refresh_callback function, along with other response properties.
     """
 
     API_ENDPOINT = "https://api.ouraring.com"
@@ -80,10 +80,10 @@ class OuraClient:
         """
         Initialize the client
 
-        :param client_id: The client id from oura portal.
+        :param client_id: The client id.
         :type client_id: str
 
-        :param client_secret: The client secret from oura portal. Required for auto refresh.
+        :param client_secret: The client secret. Required for auto refresh.
         :type client_secret: str
 
         :param access_token: Auth token.
@@ -92,7 +92,7 @@ class OuraClient:
         :param refresh_token: Use this to renew tokens when they expire
         :type refresh_token: str
 
-        :param refresh_callback: Method to save the access token, refresh token, expires at
+        :param refresh_callback: Callback to handle token response
         :type refresh_callback: callable
 
         """

@@ -1,7 +1,8 @@
-from oura import OuraClient
-import os
 import json
+import os
 from datetime import datetime
+
+from oura import OuraClient
 
 
 def setEnvironment(envFile):

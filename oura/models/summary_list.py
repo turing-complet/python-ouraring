@@ -1,9 +1,10 @@
 import json
-from helper import OuraModel, from_json, from_dict, set_attrs
 from datetime import datetime
-from sleep import Sleep
+
 from activity import Activity
+from helper import OuraModel, set_attrs
 from readiness import Readiness
+from sleep import Sleep
 
 
 class OuraSummary:

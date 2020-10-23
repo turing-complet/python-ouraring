@@ -1,4 +1,3 @@
-import json
 from helper import OuraModel, from_json
 
 
