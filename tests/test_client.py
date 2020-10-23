@@ -1,4 +1,3 @@
-import pytest
 from oura import OuraClient
 import requests_mock
 from requests_mock import ANY

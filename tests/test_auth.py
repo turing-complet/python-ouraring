@@ -1,4 +1,3 @@
-import pytest
 from oura import OuraOAuth2Client
 import requests_mock
 import json

@@ -22,6 +22,7 @@ VERSION = '1.0.4'
 
 REQUIRED = [
     'requests-oauthlib'
+    'pandas'
 ]
 
 EXTRAS = {
@@ -80,7 +81,6 @@ class UploadCommand(Command):
         # self.status('Pushing git tags…')
         # os.system('git tag v{0}'.format(about['__version__']))
         # os.system('git push --tags')
-        
         sys.exit()
 
 
@@ -113,13 +113,12 @@ setup(
         'Natural Language :: English',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
     cmdclass={
         'upload': UploadCommand,
