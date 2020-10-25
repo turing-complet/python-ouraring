@@ -17,7 +17,7 @@ DESCRIPTION = 'Oura api client.'
 URL = 'https://github.com/turing-complet/python-ouraring'
 EMAIL = 'jhagg314@gmail.com'
 AUTHOR = 'Jon Hagg'
-REQUIRES_PYTHON = '>=3.5.3'
+REQUIRES_PYTHON = '>=3.7'
 VERSION = '1.0.4'
 
 REQUIRED = [
@@ -114,8 +114,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',

@@ -11,14 +11,20 @@ class OuraClientDataFrame(OuraClient):
 
     def __init__(
         self,
-        client_id,
+        client_id=None,
         client_secret=None,
         access_token=None,
         refresh_token=None,
         refresh_callback=None,
+        personal_access_token=None,
     ):
         super().__init__(
-            client_id, client_secret, access_token, refresh_token, refresh_callback
+            client_id,
+            client_secret,
+            access_token,
+            refresh_token,
+            refresh_callback,
+            personal_access_token,
         )
 
     def __summary_df(self, summary, metrics=None):

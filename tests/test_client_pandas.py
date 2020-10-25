@@ -16,9 +16,7 @@ def client():
     # test_token.json is .gitignored
     with open(os.path.join(parent_dir, "tests/", "test_token.json"), "r") as f:
         env = json.load(f)
-    client = OuraClientDataFrame(
-        env["client_id"], env["client_secret"], env["access_token"]
-    )
+    client = OuraClientDataFrame(personal_access_token=env["personal_access_token"])
     return client
 
 

@@ -1,5 +1,6 @@
 import json
 
+import requests
 from requests_oauthlib import OAuth2Session
 
 from . import exceptions
@@ -59,13 +60,7 @@ class OuraOAuth2Client:
         )
 
 
-class OuraClient:
-    """Use this class for making requests on behalf of a user. If refresh_token and
-    expires_at are supplied, access_token should be refreshed automatically and
-    passed to the refresh_callback function, along with other response properties.
-    """
-
-    API_ENDPOINT = "https://api.ouraring.com"
+class OAuthRequestHandler:
     TOKEN_BASE_URL = "https://api.ouraring.com/oauth/token"
 
     def __init__(
@@ -77,8 +72,72 @@ class OuraClient:
         refresh_callback=None,
     ):
 
+        self.client_id = client_id
+        self.client_secret = client_secret
+
+        token = {}
+        if access_token:
+            token.update({"access_token": access_token})
+        if refresh_token:
+            token.update({"refresh_token": refresh_token})
+
+        self._session = OAuth2Session(
+            client_id,
+            token=token,
+            auto_refresh_url=self.TOKEN_BASE_URL,
+            token_updater=refresh_callback,
+        )
+
+    def make_request(self, url):
+        method = "GET"
+        response = self._session.request(method, url)
+        if response.status_code == 401:
+            self._refresh_token()
+            response = self._session.request(method, url)
+        return response
+
+    def _refresh_token(self):
+        token = self._session.refresh_token(
+            self.TOKEN_BASE_URL,
+            client_id=self.client_id,
+            client_secret=self.client_secret,
+        )
+        if self._session.token_updater:
+            self._session.token_updater(token)
+
+        return token
+
+
+class PersonalRequestHandler:
+    def __init__(self, personal_access_token):
+        self.personal_access_token = personal_access_token
+
+    def make_request(self, url):
+        return requests.get(url, params={"access_token": self.personal_access_token})
+
+
+class OuraClient:
+    """Use this class for making requests on behalf of a user. If refresh_token and
+    expires_at are supplied, access_token should be refreshed automatically and
+    passed to the refresh_callback function, along with other response properties.
+    """
+
+    API_ENDPOINT = "https://api.ouraring.com"
+
+    def __init__(
+        self,
+        client_id=None,
+        client_secret=None,
+        access_token=None,
+        refresh_token=None,
+        refresh_callback=None,
+        personal_access_token=None,
+    ):
+
         """
-        Initialize the client
+        Initialize the client - requires either oauth credentials or a personal
+        access token. Requests made using an instance will be done using a
+        fixed "mode"
 
         :param client_id: The client id.
         :type client_id: str
@@ -95,22 +154,18 @@ class OuraClient:
         :param refresh_callback: Callback to handle token response
         :type refresh_callback: callable
 
+        :param personal_access_token: Token used for accessing personal data
+        :type personal_access_token: str
+
         """
 
-        self.client_id = client_id
-        self.client_secret = client_secret
-        token = {}
-        if access_token:
-            token.update({"access_token": access_token})
-        if refresh_token:
-            token.update({"refresh_token": refresh_token})
+        if client_id is not None:
+            self._auth_handler = OAuthRequestHandler(
+                client_id, client_secret, access_token, refresh_token, refresh_callback
+            )
 
-        self._session = OAuth2Session(
-            client_id,
-            token=token,
-            auto_refresh_url=self.TOKEN_BASE_URL,
-            token_updater=refresh_callback,
-        )
+        if personal_access_token is not None:
+            self._auth_handler = PersonalRequestHandler(personal_access_token)
 
     def user_info(self):
         """
@@ -123,7 +178,8 @@ class OuraClient:
 
     def sleep_summary(self, start=None, end=None):
         """
-        Get sleep summary for the given date range. See https://cloud.ouraring.com/docs/sleep
+        Get sleep summary for the given date range. See
+        https://cloud.ouraring.com/docs/sleep
 
         :param start: Beginning of date range
         :type start: date
@@ -136,7 +192,8 @@ class OuraClient:
 
     def activity_summary(self, start=None, end=None):
         """
-        Get activity summary for the given date range. See https://cloud.ouraring.com/docs/activity
+        Get activity summary for the given date range.
+        See https://cloud.ouraring.com/docs/activity
 
         :param start: Beginning of date range
         :type start: date
@@ -149,7 +206,8 @@ class OuraClient:
 
     def readiness_summary(self, start=None, end=None):
         """
-        Get readiness summary for the given date range. See https://cloud.ouraring.com/docs/readiness
+        Get readiness summary for the given date range. See
+        https://cloud.ouraring.com/docs/readiness
 
         :param start: Beginning of date range
         :type start: date
@@ -160,13 +218,22 @@ class OuraClient:
         url = self._build_summary_url(start, end, "readiness")
         return self._make_request(url)
 
-    def _make_request(self, url, data=None, method=None, **kwargs):
-        data = data or {}
-        method = method or "GET"
-        response = self._session.request(method, url, data=data, **kwargs)
-        if response.status_code == 401:
-            self._refresh_token()
-            response = self._session.request(method, url, data=data, **kwargs)
+    def bedtime_summary(self, start=None, end=None):
+        """
+        Get bedtime summary for the given date range. See
+        https://cloud.ouraring.com/docs/bedtime
+
+        :param start: Beginning of date range
+        :type start: date
+
+        :param end: End of date range, or None if you want the current day.
+        :type end: date
+        """
+        url = self._build_summary_url(start, end, "bedtime")
+        return self._make_request(url)
+
+    def _make_request(self, url):
+        response = self._auth_handler.make_request(url)
 
         exceptions.detect_and_raise_error(response)
         payload = json.loads(response.content.decode("utf8"))
@@ -182,14 +249,3 @@ class OuraClient:
         if end:
             url = "{0}&end={1}".format(url, end)
         return url
-
-    def _refresh_token(self):
-        token = self._session.refresh_token(
-            self.TOKEN_BASE_URL,
-            client_id=self.client_id,
-            client_secret=self.client_secret,
-        )
-        if self._session.token_updater:
-            self._session.token_updater(token)
-
-        return token
