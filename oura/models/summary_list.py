@@ -1,29 +1,28 @@
-
 import json
-from helper import OuraModel, from_json, from_dict, set_attrs
 from datetime import datetime
-from sleep import Sleep
+
 from activity import Activity
+from helper import OuraModel, set_attrs
 from readiness import Readiness
+from sleep import Sleep
+
 
 class OuraSummary:
-
     def __init__(self, summary_dict):
         self.summary_dict = summary_dict
         set_attrs(self, json.loads(summary_dict))
 
-
     def _by_date(self, typename):
 
-        result = {} # date -> OuraModel object
+        result = {}  # date -> OuraModel object
 
         for item in self.summary_dict:
-            
+
             # parse item into an OuraModel so it has summary_date defined
             obj = typename(json_parsed=item)
             summary_date = obj.summary_date
             date_obj = datetime.strptime(summary_date, "%Y-%m-%d").date()
-            
+
             result[date_obj] = obj
 
         return result
@@ -50,7 +49,7 @@ class ReadinessSummary(OuraSummary, OuraModel):
         return self._by_date(Readiness)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test = """
 {
     "readiness" : [
@@ -68,7 +67,6 @@ if __name__ == '__main__':
         }
     ]
 }"""
-
 
     summary = ReadinessSummary(test)
     print(summary.by_date())

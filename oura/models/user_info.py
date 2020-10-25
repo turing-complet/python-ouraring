@@ -1,11 +1,11 @@
-import json
 from helper import OuraModel, from_json
 
+
 class UserInfo(OuraModel):
-    _KEYS = ['age', 'weight', 'gender', 'email']
+    _KEYS = ["age", "weight", "gender", "email"]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     test = """
 {
@@ -17,4 +17,3 @@ if __name__ == '__main__':
 
     u = from_json(test, UserInfo)
     print(u)
-    

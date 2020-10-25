@@ -1,5 +1,5 @@
-
 from helper import OuraModel, from_json
+
 
 class Readiness(OuraModel):
     _KEYS = [
@@ -12,11 +12,11 @@ class Readiness(OuraModel):
         "score_activity_balance",
         "score_resting_hr",
         "score_recovery_index",
-        "score_temperature"
+        "score_temperature",
     ]
 
 
-if __name__  == '__main__':
+if __name__ == "__main__":
     test = """
 {
         "summary_date": "2016-09-03",

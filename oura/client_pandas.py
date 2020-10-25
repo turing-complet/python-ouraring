@@ -1,8 +1,7 @@
-from datetime import datetime, timedelta
-from collections import defaultdict
 import pandas as pd
 
 from .client import OuraClient
+
 
 class OuraClientDataFrame(OuraClient):
     """
@@ -10,9 +9,17 @@ class OuraClientDataFrame(OuraClient):
     as a pandas.DataFrame (df) object
     """
 
-    def __init__(self, client_id, client_secret=None, access_token=None, refresh_token=None, refresh_callback=None):
-        super().__init__(client_id, client_secret, access_token, refresh_token, refresh_callback)
-
+    def __init__(
+        self,
+        client_id,
+        client_secret=None,
+        access_token=None,
+        refresh_token=None,
+        refresh_callback=None,
+    ):
+        super().__init__(
+            client_id, client_secret, access_token, refresh_token, refresh_callback
+        )
 
     def __summary_df(self, summary, metrics=None):
         """
@@ -30,16 +37,15 @@ class OuraClientDataFrame(OuraClient):
                 metrics = [metrics]
             else:
                 metrics = metrics.copy()
-            #drop any invalid cols the user may have entered
+            # drop any invalid cols the user may have entered
             metrics = [metric for metric in metrics if metric in df.columns]
-            #summary_date is a required col
-            if 'summary_date' not in metrics:
-                metrics.insert(0, 'summary_date')
+            # summary_date is a required col
+            if "summary_date" not in metrics:
+                metrics.insert(0, "summary_date")
             df = df[metrics]
-        df['summary_date'] = pd.to_datetime(df['summary_date']).dt.date
-        df = df.set_index('summary_date')
+        df["summary_date"] = pd.to_datetime(df["summary_date"]).dt.date
+        df = df.set_index("summary_date")
         return df
-
 
     def sleep_df_raw(self, start=None, end=None, metrics=None):
         """
@@ -55,9 +61,8 @@ class OuraClientDataFrame(OuraClient):
         :param metrics: Metrics to include in the df.
         :type metrics: A list of strings, or a string
         """
-        sleep_summary = self.sleep_summary(start, end)['sleep']
+        sleep_summary = self.sleep_summary(start, end)["sleep"]
         return self.__summary_df(sleep_summary, metrics)
-
 
     def sleep_df_edited(self, start=None, end=None, metrics=None):
         """
@@ -77,7 +82,6 @@ class OuraClientDataFrame(OuraClient):
         sleep_df = SleepConverter().convert_metrics(sleep_df)
         return sleep_df
 
-
     def activity_df_raw(self, start=None, end=None, metrics=None):
         """
         Create a dataframe from activity summary dict object.
@@ -92,9 +96,8 @@ class OuraClientDataFrame(OuraClient):
         :param metrics: Metrics to include in the df.
         :type metrics: A list of strings, or a string
         """
-        activity_summary = self.activity_summary(start, end)['activity']
+        activity_summary = self.activity_summary(start, end)["activity"]
         return self.__summary_df(activity_summary, metrics)
-
 
     def activity_df_edited(self, start=None, end=None, metrics=None):
         """
@@ -113,7 +116,6 @@ class OuraClientDataFrame(OuraClient):
         activity_df = self.activity_df_raw(start, end, metrics)
         return ActivityConverter().convert_metrics(activity_df)
 
-
     def readiness_df_raw(self, start=None, end=None, metrics=None):
         """
         Create a dataframe from ready summary dict object.
@@ -128,9 +130,8 @@ class OuraClientDataFrame(OuraClient):
         :param metrics: Metrics to include in the df.
         :type metrics: A list of strings, or a string
         """
-        readiness_summary = self.readiness_summary(start, end)['readiness']
+        readiness_summary = self.readiness_summary(start, end)["readiness"]
         return self.__summary_df(readiness_summary, metrics)
-
 
     def readiness_df_edited(self, start=None, end=None, metrics=None):
         """
@@ -147,7 +148,6 @@ class OuraClientDataFrame(OuraClient):
         :type metrics: A list of strings, or a string
         """
         return self.readiness_df_raw(start, end, metrics)
-
 
     def combined_df_edited(self, start=None, end=None, metrics=None):
         """
@@ -173,20 +173,21 @@ class OuraClientDataFrame(OuraClient):
         def prefix_cols(df, prefix):
             d_to_rename = {}
             for col in df.columns:
-                if col != 'summary_date':
-                    d_to_rename[col] = prefix + ':' + col
+                if col != "summary_date":
+                    d_to_rename[col] = prefix + ":" + col
             return df.rename(columns=d_to_rename)
 
         sleep_df = self.sleep_df_edited(start, end, metrics)
-        sleep_df = prefix_cols(sleep_df, 'SLEEP')
+        sleep_df = prefix_cols(sleep_df, "SLEEP")
         readiness_df = self.readiness_df_edited(start, end, metrics)
-        readiness_df = prefix_cols(readiness_df, 'READY')
+        readiness_df = prefix_cols(readiness_df, "READY")
         activity_df = self.activity_df_edited(start, end, metrics)
-        activity_df = prefix_cols(activity_df, 'ACTIVITY')
+        activity_df = prefix_cols(activity_df, "ACTIVITY")
 
-        combined_df = sleep_df.merge(readiness_df, on='summary_date').merge(activity_df, on='summary_date')
+        combined_df = sleep_df.merge(readiness_df, on="summary_date").merge(
+            activity_df, on="summary_date"
+        )
         return combined_df
-
 
     def save_as_xlsx(self, df, file, index=True, **to_excel_kwargs):
         """
@@ -206,20 +207,25 @@ class OuraClientDataFrame(OuraClient):
             """
             Remove tz from datetime cols since Excel doesn't allow
             """
-            tz_cols = df.select_dtypes(include=['datetimetz']).columns
+            tz_cols = df.select_dtypes(include=["datetimetz"]).columns
             for tz_col in tz_cols:
                 df[tz_col] = df[tz_col].dt.tz_localize(None)
             return df
 
         import xlsxwriter
+
         df = df.copy()
         df = localize(df)
-        writer = pd.ExcelWriter(file, engine='xlsxwriter', date_format = "m/d/yyy", datetime_format = "m/d/yyy h:mmAM/PM",)
+        writer = pd.ExcelWriter(
+            file,
+            engine="xlsxwriter",
+            date_format="m/d/yyy",
+            datetime_format="m/d/yyy h:mmAM/PM",
+        )
         df.to_excel(writer, index=index, **to_excel_kwargs)
         writer.save()
 
-
-    def tableize(self, df, tablefmt='pretty', is_print=True, filename=None):
+    def tableize(self, df, tablefmt="pretty", is_print=True, filename=None):
         """
         Converts dataframe to a formatted table
         For more details, see https://pypi.org/project/tabulate/
@@ -237,16 +243,24 @@ class OuraClientDataFrame(OuraClient):
         :type filename: string
         """
         from tabulate import tabulate
-        table = tabulate(df, headers='keys', tablefmt=tablefmt, showindex=True, stralign='center', numalign='center')
+
+        table = tabulate(
+            df,
+            headers="keys",
+            tablefmt=tablefmt,
+            showindex=True,
+            stralign="center",
+            numalign="center",
+        )
         if is_print:
             print(table)
         if filename:
-            with open(filename, 'w') as f:
+            with open(filename, "w") as f:
                 print(table, file=f)
         return table
 
 
-class UnitConverter():
+class UnitConverter:
     """
     Use this class to convert units for certain dataframe cols
     """
@@ -284,8 +298,8 @@ class UnitConverter():
         :type dt_metrics: List
         """
         for i, dt_metric in enumerate(dt_metrics):
-            df[dt_metric] = pd.to_datetime(df[dt_metric], format='%Y-%m-%d %H:%M:%S')
-        df = self.rename_converted_cols(df, dt_metrics, '_dt_adjusted')
+            df[dt_metric] = pd.to_datetime(df[dt_metric], format="%Y-%m-%d %H:%M:%S")
+        df = self.rename_converted_cols(df, dt_metrics, "_dt_adjusted")
         return df
 
     def convert_to_hrs(self, df, sec_metrics):
@@ -299,7 +313,7 @@ class UnitConverter():
         :type sec_metrics: List
         """
         df[sec_metrics] = df[sec_metrics] / 60 / 60
-        df = self.rename_converted_cols(df, sec_metrics, '_in_hrs')
+        df = self.rename_converted_cols(df, sec_metrics, "_in_hrs")
         return df
 
     def convert_metrics(self, df):
@@ -317,11 +331,20 @@ class UnitConverter():
             df = self.convert_to_hrs(df, sec_metrics)
         return df
 
+
 class SleepConverter(UnitConverter):
-    all_dt_metrics = ['bedtime_end', 'bedtime_start']
-    all_sec_metrics = ['awake', 'deep', 'duration', 'light', 'onset_latency', 'rem', 'total']
+    all_dt_metrics = ["bedtime_end", "bedtime_start"]
+    all_sec_metrics = [
+        "awake",
+        "deep",
+        "duration",
+        "light",
+        "onset_latency",
+        "rem",
+        "total",
+    ]
+
 
 class ActivityConverter(UnitConverter):
-    all_dt_metrics = ['day_end', 'day_start']
+    all_dt_metrics = ["day_end", "day_start"]
     all_sec_metrics = []
-
