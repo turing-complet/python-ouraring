@@ -4,6 +4,7 @@ __pycache__
 build
 *.egg-info
 .tox
+.nox
 docs/_build/
 data
 test_token.json
