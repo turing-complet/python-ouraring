@@ -27,3 +27,8 @@ In following the standard flow, you would have some code under your `/callback` 
 
 
 Now you are ready to make authenticated API requests. Please use this power responsibly.
+
+Personal Access Token
+=====================
+
+TODO

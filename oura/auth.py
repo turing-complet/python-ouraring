@@ -73,9 +73,9 @@ class OAuthRequestHandler:
 
         token = {}
         if access_token:
-            token.update({"access_token": access_token})
+            token["access_token"] = access_token
         if refresh_token:
-            token.update({"refresh_token": refresh_token})
+            token["refresh_token"] = refresh_token
 
         self._session = OAuth2Session(
             client_id,
