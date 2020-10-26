@@ -5,23 +5,12 @@ from datetime import date
 import pandas as pd
 import pytest
 
-from oura import OuraClientDataFrame
+from .mock_client import MockDataFrameClient
 
-parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-os.sys.path.insert(0, parent_dir)
-
-
-@pytest.fixture
-def client():
-    # test_token.json is .gitignored
-    with open(os.path.join(parent_dir, "tests/", "test_token.json"), "r") as f:
-        env = json.load(f)
-    client = OuraClientDataFrame(personal_access_token=env["personal_access_token"])
-    return client
+client = MockDataFrameClient()
 
 
-@pytest.mark.skip
-def test_sleep_summary_df(client):
+def test_sleep_summary_df():
     """
     Objectives:
     1. Test that dataframe summary_date match the args passed into
@@ -32,96 +21,82 @@ def test_sleep_summary_df(client):
     3. Test raw and edited dataframes are returning correctly named
     fields and correct data types
     """
-    sleep_df_raw1 = client.sleep_df_raw(start="2020-09-30")
+    start = "2017-11-05"
+    end = "2017-11-05"
+    df_raw1 = client.sleep_df_raw(start)
     # check all cols are included
-    assert sleep_df_raw1.shape[1] >= 36
+    assert df_raw1.shape == (1, 31)
     # check that start date parameter is correct
-    assert sleep_df_raw1.index[0] > date(2020, 9, 29)
+    assert df_raw1.index[0] == date(2017, 11, 5)
 
-    sleep_df_raw2 = client.sleep_df_raw(
-        start="2020-09-30", end="2020-10-01", metrics=["bedtime_start", "score"]
-    )
+    df_raw2 = client.sleep_df_raw(start, end, metrics=["bedtime_start", "score"])
     # check that correct metrics are being included
-    assert sleep_df_raw2.shape[1] == 2
+    assert df_raw2.shape[1] == 2
     # check that end date parameter is correct
-    assert sleep_df_raw2.index[-1] < date(2020, 10, 2)
+    assert df_raw2.index[-1] == date(2017, 11, 5)
     # check that data type has not been altered
-    assert type(sleep_df_raw2["bedtime_start"][0]) == str
+    assert type(df_raw2["bedtime_start"][0]) == str
 
     # test that  invalid metric 'zzz' is dropped
-    sleep_df_raw3 = client.sleep_df_raw(
-        start="2020-09-30", end="2020-10-01", metrics=["bedtime_start", "zzz"]
-    )
-    assert sleep_df_raw3.shape[1] == 1
+    df_raw3 = client.sleep_df_raw(start, end, metrics=["bedtime_start", "zzz"])
+    assert df_raw3.shape[1] == 1
 
     # check that bedtime start has been renamed and is now a timestamp
-    sleep_df_edited = client.sleep_df_edited(
-        start="2020-09-30", end="2020-10-01", metrics=["bedtime_start", "zzz"]
-    )
-    assert type(sleep_df_edited["bedtime_start_dt_adjusted"][0]) != str
+    df_edited = client.sleep_df_edited(start, end, metrics=["bedtime_start", "zzz"])
+    assert type(df_edited["bedtime_start_dt_adjusted"][0]) != str
 
 
-@pytest.mark.skip
-def test_activity_summary_df(client):
-    activity_df_raw1 = client.activity_df_raw(start="2020-09-30")
+def test_activity_summary_df():
+    start = "2016-09-03"
+    end = "2016-09-04"
+    df_raw1 = client.activity_df_raw(start)
     # check all cols are included
-    assert activity_df_raw1.shape[1] >= 34
-    assert activity_df_raw1.index[0] > date(2020, 9, 29)
+    assert df_raw1.shape == (1, 30)
+    assert df_raw1.index[0] == date(2016, 9, 3)
 
-    activity_df_raw2 = client.activity_df_raw(
-        start="2020-09-30", end="2020-10-01", metrics=["day_start", "medium"]
-    )
-    assert activity_df_raw2.shape[1] == 2
-    assert activity_df_raw2.index[-1] < date(2020, 10, 2)
-    assert type(activity_df_raw2["day_start"][0]) == str
+    df_raw2 = client.activity_df_raw(start, end, metrics=["day_start", "medium"])
+    assert df_raw2.shape[1] == 2
+    assert df_raw2.index[-1] == date(2016, 9, 3)
+    assert type(df_raw2["day_start"][0]) == str
 
     # test that  invalid metric is dropped
-    activity_df_raw3 = client.activity_df_raw(
-        start="2020-09-30", end="2020-10-01", metrics=["day_start", "zzz"]
-    )
-    assert activity_df_raw3.shape[1] == 1
+    df_raw3 = client.activity_df_raw(start, end, metrics=["day_start", "zzz"])
+    assert df_raw3.shape[1] == 1
 
     # check that day_start has been renamed and is now a timestamp
-    activity_df_edited = client.activity_df_edited(
-        start="2020-09-30", end="2020-10-01", metrics=["day_start", "zzz"]
-    )
-    assert type(activity_df_edited["day_start_dt_adjusted"][0]) != str
+    df_edited = client.activity_df_edited(start, end, metrics=["day_start", "zzz"])
+    assert type(df_edited["day_start_dt_adjusted"][0]) != str
 
 
-@pytest.mark.skip
-def test_ready_summary_df(client):
-    readiness_df_raw1 = client.readiness_df_raw(start="2020-09-30")
+def test_ready_summary_df():
+    start = "2016-09-03"
+    end = "2016-09-04"
+    df_raw1 = client.readiness_df_raw(start)
     # check all cols are included
-    assert readiness_df_raw1.shape[1] >= 10
-    assert readiness_df_raw1.index[0] > date(2020, 9, 29)
+    assert df_raw1.shape == (1, 11)
+    assert df_raw1.index[0] == date(2016, 9, 3)
 
-    readiness_df_raw2 = client.readiness_df_raw(
-        start="2020-09-30",
-        end="2020-10-01",
+    df_raw2 = client.readiness_df_raw(
+        start,
+        end,
         metrics=["score_hrv_balance", "score_recovery_index"],
     )
-    assert readiness_df_raw2.shape[1] == 2
-    assert readiness_df_raw2.index[-1] < date(2020, 10, 2)
+    assert df_raw2.shape[1] == 2
+    assert df_raw2.index[-1] == date(2016, 9, 3)
 
     # test that  invalid metric is dropped
-    readiness_df_raw3 = client.readiness_df_raw(
-        start="2020-09-30", end="2020-10-01", metrics=["score_hrv_balance", "zzz"]
-    )
-    assert readiness_df_raw3.shape[1] == 1
+    df_raw3 = client.readiness_df_raw(start, end, metrics=["score_hrv_balance", "zzz"])
+    assert df_raw3.shape[1] == 1
 
-    # check that readiness edited and readiness raw is the same
-    readiness_df_edited = client.readiness_df_edited(
-        start="2020-09-30", end="2020-10-01", metrics="score_hrv_balance"
-    )
-    assert pd.DataFrame.equals(readiness_df_raw3, readiness_df_edited)
-    # assert type(readiness_df_edited['day_start_dt_adjusted'][0]) != str
+    df_edited = client.readiness_df_edited(start, end, metrics="score_hrv_balance")
+    assert pd.DataFrame.equals(df_raw3, df_edited)
 
 
 @pytest.mark.skip
 def test_combined_summary_df():
     combined_df_edited1 = client.combined_df_edited(start="2020-09-30")
     # check all cols are included
-    assert combined_df_edited1.shape[1] >= 80
+    assert combined_df_edited1.shape == (0, 72)
     assert combined_df_edited1.index[0] > date(2020, 9, 29)
 
     # check start and end dates work accordingly
@@ -148,7 +123,7 @@ def test_combined_summary_df():
 
 
 @pytest.mark.skip
-def test_save_xlsx(client):
+def test_save_xlsx():
     """
     Check that both raw and edited df's save without issue
     """
@@ -167,7 +142,7 @@ def test_save_xlsx(client):
 
 
 @pytest.mark.skip
-def test_tableize(client):
+def test_tableize():
     """
     Check that df was printed to file
     """
