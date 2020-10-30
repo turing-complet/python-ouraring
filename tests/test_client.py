@@ -10,13 +10,13 @@ adapter = requests_mock.Adapter()
 
 def test_summary_url():
     client = OuraClient("test_id")
-    url = client._build_summary_url(start="start-date", end=None, datatype="sleep")
+    url = client._build_summary_url(start="start-date", end=None, summary_type="sleep")
     parsed_url = urlparse(url)
     params = parse_qs(parsed_url.query)
     assert "end" not in params.keys()
 
     url2 = client._build_summary_url(
-        start="start-date", end="end_date", datatype="sleep"
+        start="start-date", end="end_date", summary_type="sleep"
     )
     parsed_url = urlparse(url2)
     params = parse_qs(parsed_url.query)

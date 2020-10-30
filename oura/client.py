@@ -4,9 +4,9 @@ from . import OAuthRequestHandler, PersonalRequestHandler, exceptions
 
 
 class OuraClient:
-    """Use this class for making requests on behalf of a user. If refresh_token and
-    expires_at are supplied, access_token should be refreshed automatically and
-    passed to the refresh_callback function, along with other response properties.
+    """Make requests to Oura's API. Provide either oauth client and token
+    information to make requests on behalf of users, or a personal access token
+    to access your own data.
     """
 
     API_ENDPOINT = "https://api.ouraring.com"
@@ -22,17 +22,13 @@ class OuraClient:
     ):
 
         """
-        Initialize the client - requires either oauth credentials or a personal
-        access token. Requests made using an instance will be done using a
-        fixed "mode"
-
-        :param client_id: The client id.
+        :param client_id: The client id - identifies your application.
         :type client_id: str
 
         :param client_secret: The client secret. Required for auto refresh.
         :type client_secret: str
 
-        :param access_token: Auth token.
+        :param access_token: Access token.
         :type access_token: str
 
         :param refresh_token: Use this to renew tokens when they expire
@@ -68,71 +64,75 @@ class OuraClient:
         Get sleep summary for the given date range. See
         https://cloud.ouraring.com/docs/sleep
 
-        :param start: Beginning of date range
-        :type start: date
+        :param start: Beginning of date range, YYYY-MM-DD
+        :type start: str
 
         :param end: End of date range, or None if you want the current day.
-        :type end: date
+        :type end: str, optional
         """
-        url = self._build_summary_url(start, end, "sleep")
-        return self._make_request(url)
+        return self._get_summary(start, end, "sleep")
 
     def activity_summary(self, start=None, end=None):
         """
         Get activity summary for the given date range.
         See https://cloud.ouraring.com/docs/activity
 
-        :param start: Beginning of date range
-        :type start: date
+        :param start: Beginning of date range, YYYY-MM-DD
+        :type start: str
 
         :param end: End of date range, or None if you want the current day.
-        :type end: date
+        :type end: str, optional
         """
-        url = self._build_summary_url(start, end, "activity")
-        return self._make_request(url)
+        return self._get_summary(start, end, "activity")
 
     def readiness_summary(self, start=None, end=None):
         """
         Get readiness summary for the given date range. See
         https://cloud.ouraring.com/docs/readiness
 
-        :param start: Beginning of date range
-        :type start: date
+        :param start: Beginning of date range, YYYY-MM-DD
+        :type start: str
 
         :param end: End of date range, or None if you want the current day.
-        :type end: date
+        :type end: str, optional
         """
-        url = self._build_summary_url(start, end, "readiness")
-        return self._make_request(url)
+        return self._get_summary(start, end, "readiness")
 
     def bedtime_summary(self, start=None, end=None):
         """
         Get bedtime summary for the given date range. See
         https://cloud.ouraring.com/docs/bedtime
 
-        :param start: Beginning of date range
-        :type start: date
+        :param start: Beginning of date range, YYYY-MM-DD
+        :type start: str
 
         :param end: End of date range, or None if you want the current day.
-        :type end: date
+        :type end: str, optional
         """
-        url = self._build_summary_url(start, end, "bedtime")
+        return self._get_summary(start, end, "bedtime")
+
+    def _get_summary(self, start, end, summary_type):
+        url = self._build_summary_url(start, end, summary_type)
         return self._make_request(url)
 
     def _make_request(self, url):
         response = self._auth_handler.make_request(url)
-
         exceptions.detect_and_raise_error(response)
         payload = json.loads(response.content.decode("utf8"))
         return payload
 
-    def _build_summary_url(self, start, end, datatype):
+    def _build_summary_url(self, start, end, summary_type):
         if start is None:
             raise ValueError(
-                "Request for {} summary must include start date.".format(datatype)
+                "Request for {} summary must include start date.".format(summary_type)
             )
+        if not isinstance(start, str):
+            raise TypeError("start date must be of type str")
 
-        url = "{0}/v1/{1}?start={2}".format(self.API_ENDPOINT, datatype, start)
-        if end:
+        url = "{0}/v1/{1}?start={2}".format(self.API_ENDPOINT, summary_type, start)
+
+        if end is not None:
+            if not isinstance(end, str):
+                raise TypeError("end date must be of type str")
             url = "{0}&end={1}".format(url, end)
         return url
