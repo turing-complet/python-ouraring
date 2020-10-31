@@ -1,5 +1,6 @@
 import nox
 
+nox.options.reuse_existing_virtualenvs = True
 nox.options.sessions = "lint", "tests"
 locations = ["oura", "tests", "samples"]
 

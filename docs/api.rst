@@ -15,3 +15,6 @@ Client
    :synopsis: Probably the best way to call the Oura API using python.
    :members:
 
+.. automodule:: oura.client_pandas
+   :synopsis: Probably the best way to call the Oura API using python.
+   :members:
