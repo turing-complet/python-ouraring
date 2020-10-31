@@ -10,4 +10,6 @@ jobs:
   include:
     - python: 3.8
       env: SESSION=lint
+    - python: 3.8
+      env: SESSION=docs
 script: nox -s $SESSION

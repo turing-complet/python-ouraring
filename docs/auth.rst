@@ -27,3 +27,18 @@ In following the standard flow, you would have some code under your `/callback` 
 
 
 Now you are ready to make authenticated API requests. Please use this power responsibly.
+
+Personal Access Token
+=====================
+
+You can also access your own data using a personal_access_token - get one from
+the cloud portal and save the value somewhere, like an environment variable. Or
+somewhere else, it's your token anyway. Then just pass it to a new
+`OuraClient` instance and you'll be ready to go. See what I mean::
+
+    import os
+    from oura import OuraClient
+    my_token = os.getenv('MY_TOKEN')
+    client = OuraClient(personal_access_token=my_token)
+    who_am_i = client.user_info()
+

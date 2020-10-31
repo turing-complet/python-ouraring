@@ -6,22 +6,28 @@ from .client import OuraClient
 class OuraClientDataFrame(OuraClient):
     """
     Similiar to OuraClient, but data is returned instead
-    as a pandas.DataFrame (df) object
+    as a pandas.DataFrame object
     """
 
     def __init__(
         self,
-        client_id,
+        client_id=None,
         client_secret=None,
         access_token=None,
         refresh_token=None,
         refresh_callback=None,
+        personal_access_token=None,
     ):
         super().__init__(
-            client_id, client_secret, access_token, refresh_token, refresh_callback
+            client_id,
+            client_secret,
+            access_token,
+            refresh_token,
+            refresh_callback,
+            personal_access_token,
         )
 
-    def __summary_df(self, summary, metrics=None):
+    def _summary_df(self, summary, metrics=None):
         """
         Creates a dataframe from a summary object
 
@@ -32,6 +38,8 @@ class OuraClientDataFrame(OuraClient):
         :type metrics: A list of metric names, or alternatively a string for one metric name
         """
         df = pd.DataFrame(summary)
+        if df.size == 0:
+            return df
         if metrics:
             if type(metrics) == str:
                 metrics = [metrics]
@@ -61,8 +69,8 @@ class OuraClientDataFrame(OuraClient):
         :param metrics: Metrics to include in the df.
         :type metrics: A list of strings, or a string
         """
-        sleep_summary = self.sleep_summary(start, end)["sleep"]
-        return self.__summary_df(sleep_summary, metrics)
+        sleep_summary = super().sleep_summary(start, end)["sleep"]
+        return self._summary_df(sleep_summary, metrics)
 
     def sleep_df_edited(self, start=None, end=None, metrics=None):
         """
@@ -96,8 +104,8 @@ class OuraClientDataFrame(OuraClient):
         :param metrics: Metrics to include in the df.
         :type metrics: A list of strings, or a string
         """
-        activity_summary = self.activity_summary(start, end)["activity"]
-        return self.__summary_df(activity_summary, metrics)
+        activity_summary = super().activity_summary(start, end)["activity"]
+        return self._summary_df(activity_summary, metrics)
 
     def activity_df_edited(self, start=None, end=None, metrics=None):
         """
@@ -130,8 +138,8 @@ class OuraClientDataFrame(OuraClient):
         :param metrics: Metrics to include in the df.
         :type metrics: A list of strings, or a string
         """
-        readiness_summary = self.readiness_summary(start, end)["readiness"]
-        return self.__summary_df(readiness_summary, metrics)
+        readiness_summary = super().readiness_summary(start, end)["readiness"]
+        return self._summary_df(readiness_summary, metrics)
 
     def readiness_df_edited(self, start=None, end=None, metrics=None):
         """

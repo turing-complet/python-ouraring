@@ -10,13 +10,13 @@ adapter = requests_mock.Adapter()
 
 def test_summary_url():
     client = OuraClient("test_id")
-    url = client._build_summary_url(start="start-date", end=None, datatype="sleep")
+    url = client._build_summary_url(start="start-date", end=None, summary_type="sleep")
     parsed_url = urlparse(url)
     params = parse_qs(parsed_url.query)
     assert "end" not in params.keys()
 
     url2 = client._build_summary_url(
-        start="start-date", end="end_date", datatype="sleep"
+        start="start-date", end="end_date", summary_type="sleep"
     )
     parsed_url = urlparse(url2)
     params = parse_qs(parsed_url.query)
@@ -30,7 +30,9 @@ def test_token_refresh():
     def token_updater(token):
         update_called.append(1)
 
-    client = OuraClient("test_id", access_token="token", refresh_callback=token_updater)
+    client = OuraClient(
+        client_id="test_id", access_token="token", refresh_callback=token_updater
+    )
     adapter.register_uri(
         requests_mock.POST,
         requests_mock.ANY,
@@ -49,7 +51,7 @@ def test_token_refresh():
         text=json.dumps({"a": "b"}),
     )
 
-    client._session.mount(client.API_ENDPOINT, adapter)
+    client._auth_handler._session.mount(client.API_ENDPOINT, adapter)
     try:
         client.user_info()
     except Exception:

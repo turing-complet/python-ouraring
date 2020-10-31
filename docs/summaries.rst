@@ -3,7 +3,7 @@
 Daily summaries
 ********************************
 
-Oura's API is based on the idea of daily summaries. For each kind of data (sleep, activity, readiness)
+Oura's API is based on the idea of daily summaries. For each kind of data (sleep, activity, readiness, bedtime)
 there is an endpoint which will return summaries for one or more day. They take a start and end date in the query string,
 but if you only supply the start date you'll get back data for just that day.
 
