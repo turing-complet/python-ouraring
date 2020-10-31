@@ -5,6 +5,13 @@ from datetime import datetime
 from oura import OuraClient
 
 
+def get_self():
+    pat = os.getenv("OURA_PAT")
+    client = OuraClient(personal_access_token=pat)
+    user_info = client.user_info()
+    print(user_info)
+
+
 def setEnvironment(envFile):
     basePath = os.path.dirname(os.path.abspath(__file__))
     fullPath = os.path.join(basePath, envFile)
