@@ -1,5 +1,4 @@
 flask
-ipython
 pandas
 pytest
 requests-mock
