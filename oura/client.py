@@ -52,7 +52,7 @@ class OuraClient:
 
     def user_info(self):
         """
-        Returns information about the logged in user (who the access token was issued for).
+        Returns information about the current user.
 
         See https://cloud.ouraring.com/docs/personal-info
         """
@@ -122,17 +122,18 @@ class OuraClient:
         return payload
 
     def _build_summary_url(self, start, end, summary_type):
-        if start is None:
-            raise ValueError(
-                "Request for {} summary must include start date.".format(summary_type)
-            )
-        if not isinstance(start, str):
-            raise TypeError("start date must be of type str")
-
-        url = "{0}/v1/{1}?start={2}".format(self.API_ENDPOINT, summary_type, start)
+        url = "{0}/v1/{1}".format(self.API_ENDPOINT, summary_type)
+        params = {}
+        if start is not None:
+            if not isinstance(start, str):
+                raise TypeError("start date must be of type str")
+            params["start"] = start
 
         if end is not None:
             if not isinstance(end, str):
                 raise TypeError("end date must be of type str")
-            url = "{0}&end={1}".format(url, end)
+            params["end"] = end
+
+        qs = "&".join([f"{k}={v}" for k, v in params.items()])
+        url = f"{url}?{qs}"
         return url

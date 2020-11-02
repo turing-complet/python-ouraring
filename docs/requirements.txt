@@ -1,6 +1,5 @@
 sphinx
 sphinx-rtd-theme
-flask
 pandas
 pytest
 requests-mock
