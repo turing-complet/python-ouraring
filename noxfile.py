@@ -1,6 +1,5 @@
 import nox
 
-nox.options.reuse_existing_virtualenvs = True
 nox.options.sessions = "lint", "tests"
 locations = ["oura", "tests", "samples"]
 
@@ -44,4 +43,6 @@ def isort(session):
 def docs(session):
     session.chdir("docs")
     session.install("-r", "requirements.txt")
+    # session.run("sphinx-apidoc", "-f", "-o", "source", "../oura")
+    # session.run("make", "clean", external=True)
     session.run("make", "html", external=True)

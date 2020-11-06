@@ -9,7 +9,6 @@ verify_ssl = true
 requests-oauthlib = "*"
 flask = "*"
 twine = "*"
-ipython = "*"
 requests-mock = "*"
 pytest = "*"
 pandas = "*"
