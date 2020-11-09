@@ -23,13 +23,15 @@ def test_sleep_summary_df():
     """
     start = "2017-11-05"
     end = "2017-11-05"
-    df_raw1 = client.sleep_df_raw(start)
+    df_raw1 = client.sleep_df(start, convert=False)
     # check all cols are included
     assert df_raw1.shape == (1, 31)
     # check that start date parameter is correct
     assert df_raw1.index[0] == date(2017, 11, 5)
 
-    df_raw2 = client.sleep_df_raw(start, end, metrics=["bedtime_start", "score"])
+    df_raw2 = client.sleep_df(
+        start, end, metrics=["bedtime_start", "score"], convert=False
+    )
     # check that correct metrics are being included
     assert df_raw2.shape[1] == 2
     # check that end date parameter is correct
@@ -38,45 +40,51 @@ def test_sleep_summary_df():
     assert type(df_raw2["bedtime_start"][0]) == str
 
     # test that  invalid metric 'zzz' is dropped
-    df_raw3 = client.sleep_df_raw(start, end, metrics=["bedtime_start", "zzz"])
+    df_raw3 = client.sleep_df(
+        start, end, metrics=["bedtime_start", "zzz"], convert=False
+    )
     assert df_raw3.shape[1] == 1
 
     # check that bedtime start has been renamed and is now a timestamp
-    df_edited = client.sleep_df_edited(start, end, metrics=["bedtime_start", "zzz"])
+    df_edited = client.sleep_df(start, end, metrics=["bedtime_start", "zzz"])
     assert type(df_edited["bedtime_start_dt_adjusted"][0]) != str
 
 
 def test_activity_summary_df():
     start = "2016-09-03"
     end = "2016-09-04"
-    df_raw1 = client.activity_df_raw(start)
+    df_raw1 = client.activity_df(start, convert=False)
     # check all cols are included
     assert df_raw1.shape == (1, 30)
     assert df_raw1.index[0] == date(2016, 9, 3)
 
-    df_raw2 = client.activity_df_raw(start, end, metrics=["day_start", "medium"])
+    df_raw2 = client.activity_df(
+        start, end, metrics=["day_start", "medium"], convert=False
+    )
     assert df_raw2.shape[1] == 2
     assert df_raw2.index[-1] == date(2016, 9, 3)
     assert type(df_raw2["day_start"][0]) == str
 
     # test that  invalid metric is dropped
-    df_raw3 = client.activity_df_raw(start, end, metrics=["day_start", "zzz"])
+    df_raw3 = client.activity_df(
+        start, end, metrics=["day_start", "zzz"], convert=False
+    )
     assert df_raw3.shape[1] == 1
 
     # check that day_start has been renamed and is now a timestamp
-    df_edited = client.activity_df_edited(start, end, metrics=["day_start", "zzz"])
+    df_edited = client.activity_df(start, end, metrics=["day_start", "zzz"])
     assert type(df_edited["day_start_dt_adjusted"][0]) != str
 
 
 def test_ready_summary_df():
     start = "2016-09-03"
     end = "2016-09-04"
-    df_raw1 = client.readiness_df_raw(start)
+    df_raw1 = client.readiness_df(start)
     # check all cols are included
     assert df_raw1.shape == (1, 11)
     assert df_raw1.index[0] == date(2016, 9, 3)
 
-    df_raw2 = client.readiness_df_raw(
+    df_raw2 = client.readiness_df(
         start,
         end,
         metrics=["score_hrv_balance", "score_recovery_index"],
@@ -85,10 +93,10 @@ def test_ready_summary_df():
     assert df_raw2.index[-1] == date(2016, 9, 3)
 
     # test that  invalid metric is dropped
-    df_raw3 = client.readiness_df_raw(start, end, metrics=["score_hrv_balance", "zzz"])
+    df_raw3 = client.readiness_df(start, end, metrics=["score_hrv_balance", "zzz"])
     assert df_raw3.shape[1] == 1
 
-    df_edited = client.readiness_df_edited(start, end, metrics="score_hrv_balance")
+    df_edited = client.readiness_df(start, end, metrics="score_hrv_balance")
     assert pd.DataFrame.equals(df_raw3, df_edited)
 
 
