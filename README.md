@@ -1,13 +1,22 @@
 
 ## Installation
 
-Package is on pypi, so install as follows, or clone the repo and install dependencies using pipenv.
+Easiest way is to get it from PyPI:
 
-`pip install oura` or `pipenv install oura`
+`pip install oura`
 
 ## Getting started
 
-Once you register an application, you can use this sample script to authorize access to your own data or some test account data. It will follow the auth code flow and print out the token response. Make sure to add localhost:3030 to the redirect uris for your app (the port can be changed in the script).
+Both personal access tokens and oauth flows are supported by the API (and by
+this library). For personal use, the simplest way to start is by getting
+yourself a PAT and supplying it to a client:
+
+```
+client = OuraClient(personal_access_token="MY_TOKEN")
+```
+
+If you are using oauth, there are a few more steps. First, register an application
+Then you can use this sample script to authorize access to your own data or some test account data. It will follow the auth code flow and print out the token response. Make sure to add localhost:3030 to the redirect uris for your app (the port can be changed in the script).
 ```
 ./token-request.py <client-id> <client-secret>
 ``` 
@@ -45,7 +54,6 @@ oura = OuraClient(<client_id>, <access_token>)
 oura.user_info()
 oura.sleep_summary(start='2018-12-05', end='2018-12-10')
 oura.activity_summary(start='2018-12-25')
-oura.readiness_summary() # throws exception since start is None
 ```
 
 
@@ -53,5 +61,23 @@ The `refresh_callback` is a fuction that takes a token dict and saves it somewhe
 ```
 {'token_type': 'bearer', 'refresh_token': <refresh>, 'access_token': <token>, 'expires_in': 86400, 'expires_at': 1546485086.3277025}
 ```
+
+## Working with pandas
+You can also make requests and have the data converted to pandas dataframes by
+using the pandas client. Some customization is available but subject to
+future improvement.
+
+```
+client = OuraClientDataFrame(...)
+bedtime = client.bedtime_df(start, end, convert=True)
+
+In [3]: client.bedtime_df()
+Out[3]:
+              bedtime_window                   status
+  date
+  2020-03-17  {'start': -3600, 'end': 0} IDEAL_BEDTIME_AVAILABLE
+  2020-03-18  {'start': None, 'end': None} LOW_SLEEP_SCORES
+```
+
 
 Live your life.

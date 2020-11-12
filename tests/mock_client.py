@@ -127,5 +127,23 @@ class MockClient(OuraClient):
         }
 
 
+class MockOneDayClient(MockClient):
+    def activity_summary(self, start=None, end=None):
+        resp = super().activity_summary(start, end)
+        return {"activity": resp["activity"][0]}
+
+    def sleep_summary(self, start=None, end=None):
+        resp = super().sleep_summary(start, end)
+        return {"sleep": resp["sleep"][0]}
+
+    def readiness_summary(self, start=None, end=None):
+        resp = super().readiness_summary(start, end)
+        return {"readiness": resp["readiness"][0]}
+
+    def bedtime_summary(self, start=None, end=None):
+        resp = super().bedtime_summary(start, end)
+        return {"ideal_bedtimes": resp["ideal_bedtimes"][0]}
+
+
 class MockDataFrameClient(OuraClientDataFrame, MockClient):
     pass

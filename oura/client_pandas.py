@@ -1,7 +1,46 @@
 import pandas as pd
 
 from .client import OuraClient
-from .converters import ActivityConverter, SleepConverter, UnitConverter
+from .converters import (
+    ActivityConverter,
+    BedtimeConverter,
+    SleepConverter,
+    UnitConverter,
+)
+
+
+def to_pandas(summary, metrics=None, date_key="summary_date"):
+    """
+    Creates a dataframe from a summary object
+
+    :param summary: A summary object returned from API
+    :type summary: dictionary of dictionaries. See https://cloud.ouraring.com/docs/readiness for an example
+
+    :param metrics: The metrics to include in the DF. None includes all metrics
+    :type metrics: A list of metric names, or alternatively a string for one metric name
+    """
+
+    if isinstance(summary, dict):
+        summary = [summary]
+    df = pd.DataFrame(summary)
+    if df.size == 0:
+        return df
+    if metrics is not None:
+        if type(metrics) == str:
+            metrics = [metrics]
+        else:
+            metrics = metrics.copy()
+        # drop any invalid cols the user may have entered
+        metrics = [m for m in metrics if m in df.columns]
+
+        # always include summary_date (or date_key, as for bedtime)
+        if date_key not in metrics:
+            metrics.insert(0, date_key)
+
+        df = df[metrics]
+    df[date_key] = pd.to_datetime(df[date_key]).dt.date
+    df = df.set_index(date_key)
+    return df
 
 
 class OuraClientDataFrame(OuraClient):
@@ -28,38 +67,9 @@ class OuraClientDataFrame(OuraClient):
             personal_access_token,
         )
 
-    def _summary_df(self, summary, metrics=None, date_key="summary_date"):
-        """
-        Creates a dataframe from a summary object
-
-        :param summary: A summary object returned from API
-        :type summary: dictionary of dictionaries. See https://cloud.ouraring.com/docs/readiness for an example
-
-        :param metrics: The metrics to include in the DF. None includes all metrics
-        :type metrics: A list of metric names, or alternatively a string for one metric name
-        """
-        df = pd.DataFrame(summary)
-        if df.size == 0:
-            return df
-        if metrics:
-            if type(metrics) == str:
-                metrics = [metrics]
-            else:
-                metrics = metrics.copy()
-            # drop any invalid cols the user may have entered
-            metrics = [metric for metric in metrics if metric in df.columns]
-            # summary_date is a required col
-            if "summary_date" not in metrics:
-                metrics.insert(0, "summary_date")
-            df = df[metrics]
-        df[date_key] = pd.to_datetime(df[date_key]).dt.date
-        df = df.set_index(date_key)
-        return df
-
-    def sleep_df_raw(self, start=None, end=None, metrics=None):
+    def sleep_df(self, start=None, end=None, metrics=None, convert=True):
         """
         Create a dataframe from sleep summary dict object.
-        The dataframe is minimally edited, i.e 'raw'
 
         :param start: Beginning of date range
         :type start: string representation of a date i.e. '2020-10-31'
@@ -69,32 +79,19 @@ class OuraClientDataFrame(OuraClient):
 
         :param metrics: Metrics to include in the df.
         :type metrics: A list of strings, or a string
+
+        :param convert: Whether to convert datetime columns to pandas types
+        :type convert: bool
         """
         sleep_summary = super().sleep_summary(start, end)["sleep"]
-        return self._summary_df(sleep_summary, metrics)
+        df = to_pandas(sleep_summary, metrics)
+        if convert:
+            return SleepConverter().convert_metrics(df)
+        return df
 
-    def sleep_df_edited(self, start=None, end=None, metrics=None):
-        """
-        Create a dataframe from sleep summary dict object.
-        Some cols are unit converted for easier use or readability.
-
-        :param start: Beginning of date range
-        :type start: string representation of a date i.e. '2020-10-31'
-
-        :param end: End of date range, or None if you want the current day.
-        :type end: string representation of a date i.e. '2020-10-31'
-
-        :param metrics: Metrics to include in the df.
-        :type metrics: A list of strings, or a string
-        """
-        sleep_df = self.sleep_df_raw(start, end, metrics)
-        sleep_df = SleepConverter().convert_metrics(sleep_df)
-        return sleep_df
-
-    def activity_df_raw(self, start=None, end=None, metrics=None):
+    def activity_df(self, start=None, end=None, metrics=None, convert=True):
         """
         Create a dataframe from activity summary dict object.
-        The dataframe is minimally edited, i.e 'raw'
 
         :param start: Beginning of date range
         :type start: string representation of a date i.e. '2020-10-31'
@@ -104,31 +101,19 @@ class OuraClientDataFrame(OuraClient):
 
         :param metrics: Metrics to include in the df.
         :type metrics: A list of strings, or a string
+
+        :param convert: Whether to convert datetime columns to pandas types
+        :type convert: bool
         """
         activity_summary = super().activity_summary(start, end)["activity"]
-        return self._summary_df(activity_summary, metrics)
+        df = to_pandas(activity_summary, metrics)
+        if convert:
+            return ActivityConverter().convert_metrics(df)
+        return df
 
-    def activity_df_edited(self, start=None, end=None, metrics=None):
-        """
-        Create a dataframe from activity summary dict object.
-        Some cols are unit converted for easier use or readability.
-
-        :param start: Beginning of date range
-        :type start: string representation of a date i.e. '2020-10-31'
-
-        :param end: End of date range, or None if you want the current day.
-        :type end: string representation of a date i.e. '2020-10-31'
-
-        :param metrics: Metrics to include in the df.
-        :type metrics: A list of strings, or a string
-        """
-        activity_df = self.activity_df_raw(start, end, metrics)
-        return ActivityConverter().convert_metrics(activity_df)
-
-    def readiness_df_raw(self, start=None, end=None, metrics=None):
+    def readiness_df(self, start=None, end=None, metrics=None):
         """
         Create a dataframe from ready summary dict object.
-        The dataframe is minimally edited, i.e 'raw'
 
         :param start: Beginning of date range
         :type start: string representation of a date i.e. '2020-10-31'
@@ -140,28 +125,11 @@ class OuraClientDataFrame(OuraClient):
         :type metrics: A list of strings, or a string
         """
         readiness_summary = super().readiness_summary(start, end)["readiness"]
-        return self._summary_df(readiness_summary, metrics)
+        return to_pandas(readiness_summary, metrics)
 
-    def readiness_df_edited(self, start=None, end=None, metrics=None):
-        """
-        Create a dataframe from ready summary dict object.
-        Readiness has no cols to unit convert.
-
-        :param start: Beginning of date range
-        :type start: string representation of a date i.e. '2020-10-31'
-
-        :param end: End of date range, or None if you want the current day.
-        :type end: string representation of a date i.e. '2020-10-31'
-
-        :param metrics: Metrics to include in the df.
-        :type metrics: A list of strings, or a string
-        """
-        return self.readiness_df_raw(start, end, metrics)
-
-    def bedtime_df_raw(self, start=None, end=None, metrics=None):
+    def bedtime_df(self, start=None, end=None, metrics=None, convert=True):
         """
         Create a dataframe from bedtime summary
-        The dataframe is minimally edited, i.e 'raw'
 
         :param start: Beginning of date range
         :type start: string representation of a date i.e. '2020-10-31'
@@ -171,14 +139,18 @@ class OuraClientDataFrame(OuraClient):
 
         :param metrics: Metrics to include in the df.
         :type metrics: A list of strings, or a string
-        """
-        bedtime_summary = super().bedtime_summary(start, end)["ideal_bedtimes"]
-        for s in bedtime_summary:
-            s["window_start"] = s["bedtime_window"]["start"]
-            s["window_end"] = s["bedtime_window"]["end"]
-            del s["bedtime_window"]
-        return self._summary_df(bedtime_summary, metrics, date_key="date")
 
+        :param convert: Whether to convert datetime columns to pandas types
+        :type convert: bool
+        """
+
+        bedtime_summary = super().bedtime_summary(start, end)["ideal_bedtimes"]
+        df = to_pandas(bedtime_summary, metrics, date_key="date")
+        if convert:
+            return BedtimeConverter().convert_metrics(df)
+        return df
+
+    # TODO: use multi index instead of prefix?
     def combined_df_edited(self, start=None, end=None, metrics=None):
         """
         Combines sleep, activity, and summary into one DF
@@ -207,11 +179,11 @@ class OuraClientDataFrame(OuraClient):
                     d_to_rename[col] = prefix + ":" + col
             return df.rename(columns=d_to_rename)
 
-        sleep_df = self.sleep_df_edited(start, end, metrics)
+        sleep_df = self.sleep_df(start, end, metrics)
         sleep_df = prefix_cols(sleep_df, "SLEEP")
-        readiness_df = self.readiness_df_edited(start, end, metrics)
+        readiness_df = self.readiness_df(start, end, metrics)
         readiness_df = prefix_cols(readiness_df, "READY")
-        activity_df = self.activity_df_edited(start, end, metrics)
+        activity_df = self.activity_df(start, end, metrics)
         activity_df = prefix_cols(activity_df, "ACTIVITY")
 
         combined_df = sleep_df.merge(readiness_df, on="summary_date").merge(
