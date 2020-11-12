@@ -89,3 +89,7 @@ class SleepConverter(UnitConverter):
 class ActivityConverter(UnitConverter):
     all_dt_metrics = ["day_end", "day_start"]
     all_sec_metrics = []
+
+
+class BedtimeConverter(UnitConverter):
+    all_dt_metrics = ["date"]

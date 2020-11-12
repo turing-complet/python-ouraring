@@ -140,6 +140,10 @@ class MockOneDayClient(MockClient):
         resp = super().readiness_summary(start, end)
         return {"readiness": resp["readiness"][0]}
 
+    def bedtime_summary(self, start=None, end=None):
+        resp = super().bedtime_summary(start, end)
+        return {"ideal_bedtimes": resp["ideal_bedtimes"][0]}
+
 
 class MockDataFrameClient(OuraClientDataFrame, MockClient):
     pass

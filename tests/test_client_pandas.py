@@ -23,23 +23,21 @@ def test_sleep_summary_df():
     """
     start = "2017-11-05"
     end = "2017-11-05"
-    df_raw1 = client.sleep_df(start, convert=False)
+    df1 = client.sleep_df(start, convert=False)
     # check all cols are included
-    assert df_raw1.shape == (1, 31)
+    assert df1.shape == (1, 31)
     # check that start date parameter is correct
-    assert df_raw1.index[0] == date(2017, 11, 5)
+    assert df1.index[0] == date(2017, 11, 5)
 
-    df_raw2 = client.sleep_df(
-        start, end, metrics=["bedtime_start", "score"], convert=False
-    )
+    df2 = client.sleep_df(start, end, metrics=["bedtime_start", "score"], convert=False)
     # check that correct metrics are being included
-    assert df_raw2.shape[1] == 2
+    assert df2.shape[1] == 2
     # check that end date parameter is correct
-    assert df_raw2.index[-1] == date(2017, 11, 5)
+    assert df2.index[-1] == date(2017, 11, 5)
     # check that data type has not been altered
-    assert type(df_raw2["bedtime_start"][0]) == str
+    assert type(df2["bedtime_start"][0]) == str
 
-    # test that  invalid metric 'zzz' is dropped
+    # test that invalid metric 'zzz' is dropped
     df_raw3 = client.sleep_df(
         start, end, metrics=["bedtime_start", "zzz"], convert=False
     )
@@ -53,19 +51,17 @@ def test_sleep_summary_df():
 def test_activity_summary_df():
     start = "2016-09-03"
     end = "2016-09-04"
-    df_raw1 = client.activity_df(start, convert=False)
+    df1 = client.activity_df(start, convert=False)
     # check all cols are included
-    assert df_raw1.shape == (1, 30)
-    assert df_raw1.index[0] == date(2016, 9, 3)
+    assert df1.shape == (1, 30)
+    assert df1.index[0] == date(2016, 9, 3)
 
-    df_raw2 = client.activity_df(
-        start, end, metrics=["day_start", "medium"], convert=False
-    )
-    assert df_raw2.shape[1] == 2
-    assert df_raw2.index[-1] == date(2016, 9, 3)
-    assert type(df_raw2["day_start"][0]) == str
+    df2 = client.activity_df(start, end, metrics=["day_start", "medium"], convert=False)
+    assert df2.shape[1] == 2
+    assert df2.index[-1] == date(2016, 9, 3)
+    assert type(df2["day_start"][0]) == str
 
-    # test that  invalid metric is dropped
+    # test that invalid metric is dropped
     df_raw3 = client.activity_df(
         start, end, metrics=["day_start", "zzz"], convert=False
     )
@@ -79,25 +75,31 @@ def test_activity_summary_df():
 def test_ready_summary_df():
     start = "2016-09-03"
     end = "2016-09-04"
-    df_raw1 = client.readiness_df(start)
+    df1 = client.readiness_df(start)
     # check all cols are included
-    assert df_raw1.shape == (1, 11)
-    assert df_raw1.index[0] == date(2016, 9, 3)
+    assert df1.shape == (1, 11)
+    assert df1.index[0] == date(2016, 9, 3)
 
-    df_raw2 = client.readiness_df(
+    df2 = client.readiness_df(
         start,
         end,
         metrics=["score_hrv_balance", "score_recovery_index"],
     )
-    assert df_raw2.shape[1] == 2
-    assert df_raw2.index[-1] == date(2016, 9, 3)
+    assert df2.shape[1] == 2
+    assert df2.index[-1] == date(2016, 9, 3)
 
-    # test that  invalid metric is dropped
+    # test that invalid metric is dropped
     df_raw3 = client.readiness_df(start, end, metrics=["score_hrv_balance", "zzz"])
     assert df_raw3.shape[1] == 1
 
     df_edited = client.readiness_df(start, end, metrics="score_hrv_balance")
     assert pd.DataFrame.equals(df_raw3, df_edited)
+
+
+def test_bedtime_df():
+    df = client.bedtime_df(metrics=["bedtime_window"])
+    assert df.shape == (2, 1)
+    assert "date" == df.index.name
 
 
 @pytest.mark.skip
@@ -116,7 +118,7 @@ def test_combined_summary_df():
     assert combined_df_edited2.shape[1] == 3
     assert combined_df_edited2.index[-1] < date(2020, 10, 2)
 
-    # test that  invalid metric is dropped
+    # test that invalid metric is dropped
     combined_df_edited2 = client.combined_df_edited(
         start="2020-09-30",
         end="2020-10-01",
