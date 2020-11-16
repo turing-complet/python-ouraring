@@ -1,12 +1,7 @@
 import pandas as pd
 
 from .client import OuraClient
-from .converters import (
-    ActivityConverter,
-    BedtimeConverter,
-    SleepConverter,
-    UnitConverter,
-)
+from .converters import ActivityConverter, SleepConverter, UnitConverter
 
 
 def to_pandas(summary, metrics=None, date_key="summary_date"):
@@ -18,6 +13,9 @@ def to_pandas(summary, metrics=None, date_key="summary_date"):
 
     :param metrics: The metrics to include in the DF. None includes all metrics
     :type metrics: A list of metric names, or alternatively a string for one metric name
+
+    :param date_key: Column to set as the index, mainly for internal use
+    :type date_key: str
     """
 
     if isinstance(summary, dict):
@@ -46,7 +44,13 @@ def to_pandas(summary, metrics=None, date_key="summary_date"):
 class OuraClientDataFrame(OuraClient):
     """
     Similiar to OuraClient, but data is returned instead
-    as a pandas.DataFrame object
+    as a pandas.DataFrame object. Each row will correspond to a single day
+    of data, indexed by the date.
+
+    Methods that have a `convert` paramter will apply
+    transformations to a set of columns by default. This can be
+    overridden by passing in a specific set of columns to convert, or disabled
+    entirely by passing `convert=False`
     """
 
     def __init__(
@@ -67,7 +71,9 @@ class OuraClientDataFrame(OuraClient):
             personal_access_token,
         )
 
-    def sleep_df(self, start=None, end=None, metrics=None, convert=True):
+    def sleep_df(
+        self, start=None, end=None, metrics=None, convert=True, convert_cols=None
+    ):
         """
         Create a dataframe from sleep summary dict object.
 
@@ -82,14 +88,21 @@ class OuraClientDataFrame(OuraClient):
 
         :param convert: Whether to convert datetime columns to pandas types
         :type convert: bool
+
+        :param convert_cols: If convert is True, a set of columns to convert,
+            or None for the default. Currently supported column types include
+            datetime, timespan, and hypnogram
+        :type convert_cols: list
         """
         sleep_summary = super().sleep_summary(start, end)["sleep"]
         df = to_pandas(sleep_summary, metrics)
         if convert:
-            return SleepConverter().convert_metrics(df)
+            return SleepConverter(convert_cols).convert_metrics(df)
         return df
 
-    def activity_df(self, start=None, end=None, metrics=None, convert=True):
+    def activity_df(
+        self, start=None, end=None, metrics=None, convert=True, convert_cols=None
+    ):
         """
         Create a dataframe from activity summary dict object.
 
@@ -104,11 +117,16 @@ class OuraClientDataFrame(OuraClient):
 
         :param convert: Whether to convert datetime columns to pandas types
         :type convert: bool
+
+        :param convert_cols: If convert is True, a set of columns to convert,
+            or None for the default. Currently supported column types include
+            datetime.
+        :type convert_cols: list
         """
         activity_summary = super().activity_summary(start, end)["activity"]
         df = to_pandas(activity_summary, metrics)
         if convert:
-            return ActivityConverter().convert_metrics(df)
+            return ActivityConverter(convert_cols).convert_metrics(df)
         return df
 
     def readiness_df(self, start=None, end=None, metrics=None):
@@ -127,7 +145,7 @@ class OuraClientDataFrame(OuraClient):
         readiness_summary = super().readiness_summary(start, end)["readiness"]
         return to_pandas(readiness_summary, metrics)
 
-    def bedtime_df(self, start=None, end=None, metrics=None, convert=True):
+    def bedtime_df(self, start=None, end=None, metrics=None):
         """
         Create a dataframe from bedtime summary
 
@@ -139,16 +157,10 @@ class OuraClientDataFrame(OuraClient):
 
         :param metrics: Metrics to include in the df.
         :type metrics: A list of strings, or a string
-
-        :param convert: Whether to convert datetime columns to pandas types
-        :type convert: bool
         """
 
         bedtime_summary = super().bedtime_summary(start, end)["ideal_bedtimes"]
-        df = to_pandas(bedtime_summary, metrics, date_key="date")
-        if convert:
-            return BedtimeConverter().convert_metrics(df)
-        return df
+        return to_pandas(bedtime_summary, metrics, date_key="date")
 
     # TODO: use multi index instead of prefix?
     def combined_df_edited(self, start=None, end=None, metrics=None):
