@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 
 project = 'python-oura'
-copyright = '2019, Jon Hagg'
+copyright = '2020, Jon Hagg'
 author = 'Jon Hagg'
 
 # The short X.Y version

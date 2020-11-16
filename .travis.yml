@@ -1,9 +1,16 @@
 language: python
 python:
-  - "3.5"
-  - "3.6"
-  - "3.7-dev"
+  - 3.6
+  - 3.7
+  - 3.8
 install:
-  - pip install pipenv
-  - pipenv install
-script: pytest
+  - pip install nox
+env:
+  - SESSION=tests
+jobs:
+  include:
+    - python: 3.8
+      env: SESSION=lint
+    - python: 3.8
+      env: SESSION=docs
+script: nox -s $SESSION

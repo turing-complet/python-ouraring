@@ -7,11 +7,8 @@ verify_ssl = true
 
 [packages]
 requests-oauthlib = "*"
-sphinx = "*"
-sphinx-rtd-theme = "*"
 flask = "*"
 twine = "*"
-wheel = "*"
-ipython = "*"
 requests-mock = "*"
 pytest = "*"
+pandas = "*"

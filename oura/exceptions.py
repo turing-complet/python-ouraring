@@ -1,64 +1,66 @@
 import json
 
+
 class Timeout(Exception):
     """
     Used when a timeout occurs.
     """
+
     pass
 
 
 class HTTPException(Exception):
     def __init__(self, response, *args, **kwargs):
         try:
-            errors = json.loads(response.content.decode('utf8'))['errors']
-            message = '\n'.join([error['message'] for error in errors])
+            errors = json.loads(response.content.decode("utf8"))["errors"]
+            message = "\n".join([error["message"] for error in errors])
         except Exception:
-            if hasattr(response, 'status_code') and response.status_code == 401:
-                message = response.content.decode('utf8')
+            if hasattr(response, "status_code") and response.status_code == 401:
+                message = response.content.decode("utf8")
             else:
                 message = response
         super(HTTPException, self).__init__(message, *args, **kwargs)
 
 
 class HTTPBadRequest(HTTPException):
-    """Generic >= 400 error
-    """
+    """Generic >= 400 error"""
+
     pass
 
 
 class HTTPUnauthorized(HTTPException):
-    """401
-    """
+    """401"""
+
     pass
 
 
 class HTTPForbidden(HTTPException):
-    """403
-    """
+    """403"""
+
     pass
 
 
 class HTTPNotFound(HTTPException):
-    """404
-    """
+    """404"""
+
     pass
 
 
 class HTTPConflict(HTTPException):
-    """409 - returned when creating conflicting resources
-    """
+    """409 - returned when creating conflicting resources"""
+
     pass
 
 
 class HTTPTooManyRequests(HTTPException):
-    """429 - returned when exceeding rate limits
-    """
+    """429 - returned when exceeding rate limits"""
+
     pass
 
 
 class HTTPServerError(HTTPException):
-    """Generic >= 500 error
-    """
+    """Generic >= 500 error"""
+
     pass
 
 
@@ -73,7 +75,7 @@ def detect_and_raise_error(response):
         raise HTTPConflict(response)
     elif response.status_code == 429:
         exc = HTTPTooManyRequests(response)
-        exc.retry_after_secs = int(response.headers['Retry-After'])
+        exc.retry_after_secs = int(response.headers["Retry-After"])
         raise exc
     elif response.status_code >= 500:
         raise HTTPServerError(response)

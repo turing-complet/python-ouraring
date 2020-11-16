@@ -3,7 +3,11 @@
 Authentication and Authorization
 ********************************
 
-Oura uses OAuth2 to allow a user to grant access to their data.
+There are two choices for auth:
+
+* oauth2 for making requests on behalf of other users
+* personal access tokens, which are unsurprisingly for personal use
+
 
 See the `official documentation <https://cloud.ouraring.com/docs/authentication>`_
 
@@ -27,3 +31,18 @@ In following the standard flow, you would have some code under your `/callback` 
 
 
 Now you are ready to make authenticated API requests. Please use this power responsibly.
+
+Personal Access Token
+=====================
+
+You can also access your own data using a personal_access_token - get one from
+the cloud portal and save the value somewhere, like an environment variable. Or
+somewhere else, it's your token anyway. Then just pass it to a new
+:class:`oura.OuraClient` instance and you'll be ready to go. See what I mean ::
+
+    import os
+    from oura import OuraClient
+    my_token = os.getenv('MY_TOKEN')
+    client = OuraClient(personal_access_token=my_token)
+    who_am_i = client.user_info()
+

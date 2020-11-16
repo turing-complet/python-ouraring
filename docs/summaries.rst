@@ -3,16 +3,16 @@
 Daily summaries
 ********************************
 
-Oura's API is based on the idea of daily summaries. For each kind of data (sleep, activity, readiness)
-there is an endpoint which will return summaries for one or more day. They take a start and end date in the query string,
-but if you only supply the start date you'll get back data for just that day.
+Oura's API is based on the idea of daily summaries. For each kind of data (sleep, activity, readiness, bedtime)
+there is an endpoint which will return summaries for one or more day. They each
+take an optional start date and end date (YYYY-MM-DD).
 
-See the `official documentation <https://cloud.ouraring.com/docs/daily-summaries>`_
+See the `official documentation <https://cloud.ouraring.com/docs/daily-summaries>`_ for behavior regarding the dates.
 
 Usage
 ========================
 
-If you just want to make some requests, it's fairly easy. Just do this::
+If you just want to make some requests, it's fairly easy. Just do this ::
 
     from oura import OuraClient
     oura = OuraClient(client_id=MY_CLIENT_ID, access_token=ACCESS_TOKEN)
@@ -34,7 +34,7 @@ For example::
     client = OuraClient(client_id=MY_CLIENT_ID, client_secret=MY_CLIENT_SECRET, access_token, refresh_token, refresh_callback=save_token_to_db)
 
 
-Now you are ready to get all the data, provided the user has granted you the required scopes.::
+Now you are ready to get all the data, provided the user has granted you the required scopes. ::
 
     from datetime import date
     today = str(date.today()) # 2019-01-06, e,g, YYYY-MM-DD, or use whatever start/end date you want
