@@ -13,6 +13,9 @@ def to_pandas(summary, metrics=None, date_key="summary_date"):
 
     :param metrics: The metrics to include in the DF. None includes all metrics
     :type metrics: A list of metric names, or alternatively a string for one metric name
+
+    :param date_key: Column to set as the index, mainly for internal use
+    :type date_key: str
     """
 
     if isinstance(summary, dict):
@@ -41,7 +44,13 @@ def to_pandas(summary, metrics=None, date_key="summary_date"):
 class OuraClientDataFrame(OuraClient):
     """
     Similiar to OuraClient, but data is returned instead
-    as a pandas.DataFrame object
+    as a pandas.DataFrame object. Each row will correspond to a single day
+    of data, indexed by the date.
+
+    Methods that have a `convert` paramter will apply
+    transformations to a set of columns by default. This can be
+    overridden by passing in a specific set of columns to convert, or disabled
+    entirely by passing `convert=False`
     """
 
     def __init__(
@@ -79,6 +88,11 @@ class OuraClientDataFrame(OuraClient):
 
         :param convert: Whether to convert datetime columns to pandas types
         :type convert: bool
+
+        :param convert_cols: If convert is True, a set of columns to convert,
+            or None for the default. Currently supported column types include
+            datetime, timespan, and hypnogram
+        :type convert_cols: list
         """
         sleep_summary = super().sleep_summary(start, end)["sleep"]
         df = to_pandas(sleep_summary, metrics)
@@ -103,6 +117,11 @@ class OuraClientDataFrame(OuraClient):
 
         :param convert: Whether to convert datetime columns to pandas types
         :type convert: bool
+
+        :param convert_cols: If convert is True, a set of columns to convert,
+            or None for the default. Currently supported column types include
+            datetime.
+        :type convert_cols: list
         """
         activity_summary = super().activity_summary(start, end)["activity"]
         df = to_pandas(activity_summary, metrics)
