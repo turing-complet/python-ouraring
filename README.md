@@ -1,7 +1,7 @@
 
 ## Installation
 
-Easiest way is to get it from PyPI:
+Easiest way is to get it from [PyPI](https://pypi.org/project/oura/):
 
 `pip install oura`
 
