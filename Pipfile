@@ -4,11 +4,12 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+tabulate = "*"
+pytest = "*"
+twine = "*"
+requests-mock = "*"
 
 [packages]
 requests-oauthlib = "*"
-flask = "*"
-twine = "*"
-requests-mock = "*"
-pytest = "*"
 pandas = "*"
+Flask = "*"

@@ -8,7 +8,7 @@ locations = ["oura", "tests", "samples"]
 def tests(session):
     args = session.posargs
     session.install("pipenv")
-    session.run("pipenv", "sync")
+    session.run("pipenv", "sync", "--dev")
     session.run("pipenv", "run", "pytest", *args)
 
 
