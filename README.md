@@ -45,10 +45,10 @@ token_dict = auth_client.fetch_access_token(code='auth_code_from_query_string')
 Now that's out of the way, you can call the api:
 ```
 # supply all the params for auto refresh
-oura = OuraClient(<client_id>, <client_secret> <access_token>, <refresh_token>, <refresh_callback>)
+oura = OuraClient(<client_id>, <client_secret>, <access_token>, <refresh_token>, <refresh_callback>)
 
 # or just these for make calls until token expires
-oura = OuraClient(<client_id>, <access_token>)
+oura = OuraClient(<client_id>, <client_secret>, <access_token>)
 
 # make authenticated API calls
 oura.user_info()
