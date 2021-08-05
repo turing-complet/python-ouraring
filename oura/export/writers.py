@@ -28,14 +28,13 @@ def save_as_xlsx(df, file, index=True, **to_excel_kwargs):
 
     df = df.copy()
     df = localize(df)
-    writer = pd.ExcelWriter(
+    with pd.ExcelWriter(
         file,
         engine="xlsxwriter",
         date_format="m/d/yyy",
         datetime_format="m/d/yyy h:mmAM/PM",
-    )
-    df.to_excel(writer, index=index, **to_excel_kwargs)
-    writer.save()
+    ) as writer:
+        df.to_excel(writer, index=index, **to_excel_kwargs)
 
 
 def tableize(df, tablefmt="pretty", is_print=True):
