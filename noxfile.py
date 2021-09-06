@@ -1,14 +1,14 @@
 import nox
 
 nox.options.sessions = "lint", "tests"
-locations = ["oura", "tests", "samples"]
+locations = ["oura", "tests", "samples", "noxfile.py"]
 
 
 @nox.session
 def tests(session):
     args = session.posargs
     session.install("pipenv")
-    session.run("pipenv", "sync")
+    session.run("pipenv", "sync", "--dev")
     session.run("pipenv", "run", "pytest", *args)
 
 
@@ -18,7 +18,7 @@ def lint(session):
     session.install("flake8", "black", "isort")
     session.run("flake8", *args)
     session.run("black", "--check", "--diff", *args)
-    session.run("isort", "-m", "3", "--tc", "--check", "--diff", *args)
+    session.run("isort", "--profile", "black", "--check", "--diff", *args)
 
 
 @nox.session
@@ -36,7 +36,7 @@ def black(session):
 def isort(session):
     args = session.posargs or locations
     session.install("isort")
-    session.run("isort", "-m", "3", "--tc", *args)
+    session.run("isort", "--profile", "black", *args)
 
 
 @nox.session
