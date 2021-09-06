@@ -1,7 +1,4 @@
 import os
-from io import StringIO
-
-import pytest
 
 from oura.export.writers import save_as_xlsx, tableize
 
@@ -10,7 +7,6 @@ from .mock_client import MockDataFrameClient
 client = MockDataFrameClient()
 
 
-@pytest.mark.skip
 def test_save_xlsx():
     """
     Check that both raw and edited df's save without issue
@@ -23,8 +19,8 @@ def test_save_xlsx():
     )
     raw_file = "df_raw.xlsx"
     edited_file = "df_edited.xlsx"
-    client.save_as_xlsx(df_raw, raw_file, sheet_name="hello world")
-    client.save_as_xlsx(df_edited, "df_edited.xlsx")
+    save_as_xlsx(df_raw, raw_file, sheet_name="hello world")
+    save_as_xlsx(df_edited, edited_file)
     assert os.path.exists(raw_file)
     assert os.path.exists(edited_file)
 

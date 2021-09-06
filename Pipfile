@@ -8,6 +8,7 @@ tabulate = "*"
 pytest = "*"
 twine = "*"
 requests-mock = "*"
+xlsxwriter = "*"
 
 [packages]
 requests-oauthlib = "*"
