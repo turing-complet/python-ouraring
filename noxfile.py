@@ -1,7 +1,7 @@
 import nox
 
 nox.options.sessions = "lint", "tests"
-locations = ["oura", "tests", "samples"]
+locations = ["oura", "tests", "samples", "noxfile.py"]
 
 
 @nox.session

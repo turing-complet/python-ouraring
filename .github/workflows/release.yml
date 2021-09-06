@@ -1,0 +1,21 @@
+name: Publish Python 🐍 package 📦 to PyPI
+on:
+  push:
+    tags:
+      - v*.*.*
+
+jobs:
+  release:
+    name: Publish python package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - run: python -m pip install --upgrade build
+      - run: python -m build
+
+      - name: Publish to PyPI
+        if: startsWith(github.ref, 'refs/tags')
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
