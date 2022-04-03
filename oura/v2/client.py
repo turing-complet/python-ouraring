@@ -1,6 +1,7 @@
 import json
-from ..auth import PersonalRequestHandler
+
 from .. import exceptions
+from ..auth import PersonalRequestHandler
 
 
 class OuraV2:
@@ -20,7 +21,8 @@ class OuraV2:
         return self._get_summary(start_date, end_date, next_token, "heartrate")
 
     def personal_info(self):
-        pass
+        url = f"{self.API_ENDPOINT}/personal_info"
+        return self._make_request(url)
 
     def session(self, start_date=None, end_date=None, next_token=None):
         return self._get_summary(start_date, end_date, next_token, "session")
@@ -31,17 +33,19 @@ class OuraV2:
     def workouts(self, start_date=None, end_date=None, next_token=None):
         return self._get_summary(start_date, end_date, next_token, "workout")
 
-    def _get_summary(self, start_date, end_date, summary_type, next_token):
-        url = self._build_summary_url(start_date, end_date, summary_type, next_token)
+    def _get_summary(self, start_date, end_date, next_token, summary_type):
+        url = self._build_summary_url(start_date, end_date, next_token, summary_type)
         return self._make_request(url)
 
     def _make_request(self, url):
+        print(url)
         response = self._auth_handler.make_request(url)
+        # return response
         exceptions.detect_and_raise_error(response)
         payload = json.loads(response.content.decode("utf8"))
         return payload
 
-    def _build_summary_url(self, start_date, end_date, summary_type, next_token):
+    def _build_summary_url(self, start_date, end_date, next_token, summary_type):
         url = f"{self.API_ENDPOINT}/{summary_type}"
         params = {}
         if start_date is not None:
@@ -58,5 +62,5 @@ class OuraV2:
             params["next_token"] = next_token
 
         qs = "&".join([f"{k}={v}" for k, v in params.items()])
-        url = f"{url}?{qs}"
+        url = f"{url}?{qs}" if qs != "" else url
         return url
