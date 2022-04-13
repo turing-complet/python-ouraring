@@ -110,3 +110,7 @@ class PersonalRequestHandler:
 
     def make_request(self, url):
         return requests.get(url, params={"access_token": self.personal_access_token})
+
+    def make_request_v2(self, url):
+        headers = {"Authorization": f"Bearer {self.personal_access_token}"}
+        return requests.get(url, headers=headers)

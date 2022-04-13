@@ -38,9 +38,7 @@ class OuraV2:
         return self._make_request(url)
 
     def _make_request(self, url):
-        print(url)
-        response = self._auth_handler.make_request(url)
-        # return response
+        response = self._auth_handler.make_request_v2(url)
         exceptions.detect_and_raise_error(response)
         payload = json.loads(response.content.decode("utf8"))
         return payload
