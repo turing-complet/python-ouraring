@@ -73,7 +73,7 @@ class OuraClientDataFrame(OuraClient):
 
     def user_info_df(self):
         user_info = super().user_info()
-        return pd.DataFrame(user_info)
+        return pd.DataFrame([user_info])
 
     def sleep_df(
         self, start=None, end=None, metrics=None, convert=True, convert_cols=None

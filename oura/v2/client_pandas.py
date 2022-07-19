@@ -76,7 +76,7 @@ class OuraClientDataFrameV2(OuraClientV2):
 
     def personal_info_df(self):
         info = super().personal_info()
-        return pd.DataFrame(info)
+        return pd.DataFrame([info])
 
     def sessions_df(self, start=None, end=None, metrics=None):
         sessions = super().session(start, end)["data"]
