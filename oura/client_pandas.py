@@ -9,12 +9,12 @@ def to_pandas(summary, metrics=None, date_key="summary_date"):
     Creates a dataframe from a summary object
 
     :param summary: A summary object returned from API
-    :type summary: dictionary of dictionaries. See https://cloud.ouraring.com/docs/readiness for an example
+    :type summary: list of dictionaries. See https://cloud.ouraring.com/docs/readiness for an example
 
     :param metrics: The metrics to include in the DF. None includes all metrics
     :type metrics: A list of metric names, or alternatively a string for one metric name
 
-    :param date_key: Column to set as the index, mainly for internal use
+    :param date_key: Column to set as the index
     :type date_key: str
     """
 
@@ -70,6 +70,10 @@ class OuraClientDataFrame(OuraClient):
             refresh_callback,
             personal_access_token,
         )
+
+    def user_info_df(self):
+        user_info = super().user_info()
+        return pd.DataFrame(user_info)
 
     def sleep_df(
         self, start=None, end=None, metrics=None, convert=True, convert_cols=None

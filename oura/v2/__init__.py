@@ -1,1 +1,2 @@
-from .client import OuraV2
+from .client import OuraClientV2
+from .client_pandas import OuraClientDataFrameV2

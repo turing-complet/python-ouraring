@@ -4,7 +4,7 @@ from .. import exceptions
 from ..auth import OAuthRequestHandler, PersonalRequestHandler
 
 
-class OuraV2:
+class OuraClientV2:
 
     API_ENDPOINT = "https://api.ouraring.com/v2/usercollection"
 
