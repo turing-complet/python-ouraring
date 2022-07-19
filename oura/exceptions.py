@@ -52,6 +52,12 @@ class HTTPConflict(HTTPException):
     pass
 
 
+class HTTPUpgradeRequired(HTTPException):
+    """426 - returned when the user does not have an updated version of the app"""
+
+    pass
+
+
 class HTTPTooManyRequests(HTTPException):
     """429 - returned when exceeding rate limits"""
 
@@ -73,6 +79,8 @@ def detect_and_raise_error(response):
         raise HTTPNotFound(response)
     elif response.status_code == 409:
         raise HTTPConflict(response)
+    elif response.status_code == 426:
+        raise HTTPUpgradeRequired(response)
     elif response.status_code == 429:
         exc = HTTPTooManyRequests(response)
         exc.retry_after_secs = int(response.headers["Retry-After"])

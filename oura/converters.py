@@ -53,7 +53,7 @@ class UnitConverter:
         :param dt_metrics: List of metrics to be converted to datetime
         :type dt_metrics: List
         """
-        for i, dt_metric in enumerate(dt_metrics):
+        for _, dt_metric in enumerate(dt_metrics):
             df[dt_metric] = pd.to_datetime(df[dt_metric], format="%Y-%m-%d %H:%M:%S")
         df = self._rename_converted_cols(df, dt_metrics, "_dt_adjusted")
         return df

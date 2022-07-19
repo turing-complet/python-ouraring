@@ -5,6 +5,35 @@ Easiest way is to get it from [PyPI](https://pypi.org/project/oura/):
 
 `pip install oura`
 
+## Project maintenance
+If anyone is interested in taking over maintenance of this project, please contact me at
+turingcomplet@proton.me or submit an issue. Alternatively, feel free to simply fork this
+repo or create a new one and publish the package under a new name. In that case, I will
+add a link here. I still plan on doing what I can to keep this up to date, but don't
+feel I can commit to maintaining a level of quality and responsiveness that you all
+deserve.
+
+## Note about the v2 API
+All sections in the readme should apply to the v2 API that is being rolled out, except that the
+methods will differ, pandas support is less sophisticated, and I haven't tested the v2
+clients with the OAuth2 flow. The auth has been updated to pass tokens in the http
+header, but the usage of the underlying `requests-oauthlib` library has not been
+changed.
+
+Enjoy the latest clients as follows (and see
+[docs](https://cloud.ouraring.com/v2/docs)). All methods except `personal_info` take a
+`start_date`, `end_date`, and `next_token`.
+```
+from oura.v2 import OuraClientV2, OuraClientDataFrameV2
+v2 = OuraClientDataFrameV2(personal_access_token="MY_PAT")
+
+# methods will be named after the url path (see docs linked above)
+v2.heartrate()
+
+# pandas methods end with _df
+v2.tags_df()
+```
+
 ## Getting started
 
 Both personal access tokens and oauth flows are supported by the API (and by
