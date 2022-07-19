@@ -1,14 +1,47 @@
 import json
 
 from .. import exceptions
-from ..auth import PersonalRequestHandler
+from ..auth import OAuthRequestHandler, PersonalRequestHandler
 
 
 class OuraV2:
 
     API_ENDPOINT = "https://api.ouraring.com/v2/usercollection"
 
-    def __init__(self, personal_access_token) -> None:
+    def __init__(
+        self,
+        client_id=None,
+        client_secret=None,
+        access_token=None,
+        refresh_token=None,
+        refresh_callback=None,
+        personal_access_token=None,
+    ):
+        """
+        :param client_id: The client id - identifies your application.
+        :type client_id: str
+
+        :param client_secret: The client secret. Required for auto refresh.
+        :type client_secret: str
+
+        :param access_token: Access token.
+        :type access_token: str
+
+        :param refresh_token: Use this to renew tokens when they expire
+        :type refresh_token: str
+
+        :param refresh_callback: Callback to handle token response
+        :type refresh_callback: callable
+
+        :param personal_access_token: Token used for accessing personal data
+        :type personal_access_token: str
+        """
+
+        if client_id is not None:
+            self._auth_handler = OAuthRequestHandler(
+                client_id, client_secret, access_token, refresh_token, refresh_callback
+            )
+
         if personal_access_token is not None:
             self._auth_handler = PersonalRequestHandler(personal_access_token)
 

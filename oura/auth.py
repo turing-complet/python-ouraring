@@ -10,7 +10,7 @@ class OuraOAuth2Client:
 
     AUTHORIZE_BASE_URL = "https://cloud.ouraring.com/oauth/authorize"
     TOKEN_BASE_URL = "https://api.ouraring.com/oauth/token"
-    SCOPE = ["email", "personal", "daily"]
+    SCOPE = ["email", "personal", "daily", "heartrate", "workout", "tag", "session"]
 
     def __init__(self, client_id, client_secret):
 
@@ -91,6 +91,9 @@ class OAuthRequestHandler:
             self._refresh_token()
             response = self._session.request(method, url)
         return response
+
+    def make_request_v2(self, url):
+        return self.make_request(url)
 
     def _refresh_token(self):
         token = self._session.refresh_token(
