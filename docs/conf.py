@@ -19,9 +19,9 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'python-oura'
-copyright = '2020, Jon Hagg'
-author = 'Jon Hagg'
+project = 'python-ouraring'
+copyright = '2022, turing-compet'
+author = 'turing-complet'
 
 # The short X.Y version
 version = ''
@@ -136,7 +136,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'python-oura.tex', 'python-oura Documentation',
-     'Jon Hagg', 'manual'),
+     'turing-compet', 'manual'),
 ]
 
 
