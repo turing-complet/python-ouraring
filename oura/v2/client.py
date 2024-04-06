@@ -95,3 +95,9 @@ class OuraClientV2:
         qs = "&".join([f"{k}={v}" for k, v in params.items()])
         url = f"{url}?{qs}" if qs != "" else url
         return url
+
+    def revoke_token(self):
+        response = self._auth_handler.revoke_token()
+        exceptions.detect_and_raise_error(response)
+        payload = json.loads(response.content.decode("utf8"))
+        return payload
