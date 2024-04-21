@@ -1,4 +1,5 @@
 import json
+from urllib.parse import urlencode
 
 from .. import exceptions
 from ..auth import OAuthRequestHandler, PersonalRequestHandler
@@ -105,17 +106,19 @@ class OuraClientV2:
         if start_date is not None:
             if not isinstance(start_date, str):
                 raise TypeError("start date must be of type str")
-            params["start_date"] = start_date
+            key = "start_datetime" if summary_type == 'heartrate' else "start_date"
+            params[key] = start_date
 
         if end_date is not None:
             if not isinstance(end_date, str):
                 raise TypeError("end date must be of type str")
-            params["end_date"] = end_date
+            key = "end_datetime" if summary_type == 'heartrate' else "end_date"
+            params[key] = end_date
 
         if next_token is not None:
             params["next_token"] = next_token
 
-        qs = "&".join([f"{k}={v}" for k, v in params.items()])
+        qs = urlencode(params)
         url = f"{url}?{qs}" if qs != "" else url
         return url
 
