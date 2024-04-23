@@ -13,7 +13,6 @@ class OuraOAuth2Client:
     SCOPE = ["email", "personal", "daily", "heartrate", "workout", "tag", "session"]
 
     def __init__(self, client_id, client_secret):
-
         """
         Initialize the client for oauth flow.
 

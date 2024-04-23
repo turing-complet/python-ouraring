@@ -23,7 +23,7 @@ def to_pandas(summary, metrics=None, date_key="timestamp"):
     if df.size == 0:
         return df
     if metrics is not None:
-        if type(metrics) == str:
+        if isinstance(metrics, str):
             metrics = [metrics]
         else:
             metrics = metrics.copy()

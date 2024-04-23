@@ -20,7 +20,6 @@ class OuraClient:
         refresh_callback=None,
         personal_access_token=None,
     ):
-
         """
         :param client_id: The client id - identifies your application.
         :type client_id: str
