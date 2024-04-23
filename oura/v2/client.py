@@ -1,4 +1,5 @@
 import json
+from urllib.parse import urlencode
 
 from .. import exceptions
 from ..auth import OAuthRequestHandler, PersonalRequestHandler
@@ -50,18 +51,41 @@ class OuraClientV2:
         # start_date default to end_date - 1 day
         return self._get_summary(start_date, end_date, next_token, "daily_activity")
 
+    def daily_readiness(self, start_date=None, end_date=None, next_token=None):
+        return self._get_summary(start_date, end_date, next_token, "daily_readiness")
+
+    def daily_sleep(self, start_date=None, end_date=None, next_token=None):
+        return self._get_summary(start_date, end_date, next_token, "daily_sleep")
+
+    def daily_spo2(self, start_date=None, end_date=None, next_token=None):
+        return self._get_summary(start_date, end_date, next_token, "daily_spo2")
+
+    def daily_stress(self, start_date=None, end_date=None, next_token=None):
+        return self._get_summary(start_date, end_date, next_token, "daily_stress")
+
+    def enhanced_tag(self, start_date=None, end_date=None, next_token=None):
+        return self._get_summary(start_date, end_date, next_token, "enhanced_tag")
+
     def heartrate(self, start_date=None, end_date=None, next_token=None):
         return self._get_summary(start_date, end_date, next_token, "heartrate")
 
     def personal_info(self):
-        url = f"{self.API_ENDPOINT}/personal_info"
-        return self._make_request(url)
+        return self._get_summary(None, None, None, "personal_info")
+
+    def rest_mode_period(self, start_date=None, end_date=None, next_token=None):
+        return self._get_summary(start_date, end_date, next_token, "rest_mode_period")
+
+    def ring_configuration(self, next_token=None):
+        return self._get_summary(None, None, next_token, "ring_configuration")
 
     def session(self, start_date=None, end_date=None, next_token=None):
         return self._get_summary(start_date, end_date, next_token, "session")
 
-    def tags(self, start_date=None, end_date=None, next_token=None):
-        return self._get_summary(start_date, end_date, next_token, "tag")
+    def sleep(self, start_date=None, end_date=None, next_token=None):
+        return self._get_summary(start_date, end_date, next_token, "sleep")
+
+    def sleep_time(self, start_date=None, end_date=None, next_token=None):
+        return self._get_summary(start_date, end_date, next_token, "sleep_time")
 
     def workouts(self, start_date=None, end_date=None, next_token=None):
         return self._get_summary(start_date, end_date, next_token, "workout")
@@ -82,16 +106,24 @@ class OuraClientV2:
         if start_date is not None:
             if not isinstance(start_date, str):
                 raise TypeError("start date must be of type str")
-            params["start_date"] = start_date
+            key = "start_datetime" if summary_type == "heartrate" else "start_date"
+            params[key] = start_date
 
         if end_date is not None:
             if not isinstance(end_date, str):
                 raise TypeError("end date must be of type str")
-            params["end_date"] = end_date
+            key = "end_datetime" if summary_type == "heartrate" else "end_date"
+            params[key] = end_date
 
         if next_token is not None:
             params["next_token"] = next_token
 
-        qs = "&".join([f"{k}={v}" for k, v in params.items()])
+        qs = urlencode(params)
         url = f"{url}?{qs}" if qs != "" else url
         return url
+
+    def revoke_token(self):
+        response = self._auth_handler.revoke_token()
+        exceptions.detect_and_raise_error(response)
+        payload = json.loads(response.content.decode("utf8"))
+        return payload

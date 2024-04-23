@@ -35,7 +35,7 @@ def test_sleep_summary_df():
     # check that end date parameter is correct
     assert df2.index[-1] == date(2017, 11, 5)
     # check that data type has not been altered
-    assert type(df2["bedtime_start"][0]) == str
+    assert isinstance(df2["bedtime_start"][0], str)
 
     # test that invalid metric 'zzz' is dropped
     df_raw3 = client.sleep_df(
@@ -45,7 +45,7 @@ def test_sleep_summary_df():
 
     # check that bedtime start has been renamed and is now a timestamp
     df_edited = client.sleep_df(start, end, metrics=["bedtime_start", "zzz"])
-    assert type(df_edited["bedtime_start_dt_adjusted"][0]) != str
+    assert not isinstance(df_edited["bedtime_start_dt_adjusted"][0], str)
 
 
 def test_activity_summary_df():
@@ -59,7 +59,7 @@ def test_activity_summary_df():
     df2 = client.activity_df(start, end, metrics=["day_start", "medium"], convert=False)
     assert df2.shape[1] == 2
     assert df2.index[-1] == date(2016, 9, 3)
-    assert type(df2["day_start"][0]) == str
+    assert isinstance(df2["day_start"][0], str)
 
     # test that invalid metric is dropped
     df_raw3 = client.activity_df(
@@ -69,7 +69,7 @@ def test_activity_summary_df():
 
     # check that day_start has been renamed and is now a timestamp
     df_edited = client.activity_df(start, end, metrics=["day_start", "zzz"])
-    assert type(df_edited["day_start_dt_adjusted"][0]) != str
+    assert not isinstance(df_edited["day_start_dt_adjusted"][0], str)
 
 
 def test_ready_summary_df():
